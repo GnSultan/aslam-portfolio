@@ -1,26 +1,220 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FAFAFA;
+  --text: #0F0F0F;
+  --text-secondary: #2A2A2A;
+  --primary: #0066FF;
+  --secondary: #E5E5E5;
+  --footer: #000000;
+
+  --font-sans: 'Clash Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --section-padding: clamp(1rem, 2vw, 2rem);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    overflow-x: hidden;
+  }
+  
+  body {
+    background-color: var(--background);
+    background-image: 
+      linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    background-size: 200px 200px;
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+
+  h1, .h1 {
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+  }
+
+  h2, .h2 {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  h3, .h3 {
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  p, .p {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .container {
+    @apply max-w-none mx-auto px-4 sm:px-6 lg:px-12;
+  }
+
+  .container-wide {
+    @apply max-w-none mx-auto px-4 sm:px-6 lg:px-16;
+  }
+
+  .section {
+    @apply py-section;
+  }
+
+  .section-spaced {
+    @apply py-[clamp(4rem,8vw,8rem)];
+  }
+
+  .content-width {
+    @apply max-w-6xl mx-auto;
+  }
+
+  .h1 {
+    @apply text-h1 font-normal;
+  }
+
+  .h2 {
+    @apply text-h2 font-normal;
+  }
+
+  .h3 {
+    @apply text-h3 font-normal;
+  }
+
+  .p {
+    @apply text-lg leading-relaxed text-text-secondary;
+  }
+
+  .link-hover {
+    @apply relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] 
+           after:bg-current after:transition-all after:duration-300 hover:after:w-full;
+  }
+
+  .card-hover {
+    @apply transition-transform duration-300 hover:scale-[1.02];
+  }
+
+  /* Hide scrollbars for horizontal gallery */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Keyboard cursor animation */
+  @keyframes cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  .cursor-blink {
+    animation: cursor-blink 1s infinite;
+  }
+
+  /* 30-70% Layout Classes */
+  .container-30-70 {
+    @apply w-full px-4 sm:px-6 lg:px-16;
+  }
+
+  .content-70 {
+    @apply ml-auto w-full max-w-[70%];
+  }
+
+  /* 70-30% Layout Classes */
+  .container-70-30 {
+    @apply w-full px-4 sm:px-6 lg:px-16;
+  }
+
+  .content-70-left {
+    @apply w-full max-w-[70%];
+  }
+
+  .header-underline-70 {
+    @apply relative after:absolute after:bottom-0 after:left-[30%] after:w-0 after:h-[1px] 
+           after:bg-current after:transition-all after:duration-300 hover:after:w-[70%];
+  }
+
+  /* Smart Masonry Layout */
+  .masonry {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    grid-auto-rows: min-content; /* Let rows size to content */
+    align-items: start;
+    grid-auto-flow: row dense; /* Ensure proper row flow and fill gaps */
+  }
+
+  /* Smart Masonry item sizes */
+  .masonry-item {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  /* Square cards - 1:1 aspect ratio */
+  .masonry-item.square {
+    aspect-ratio: 1; /* Perfect squares - let aspect-ratio control height */
+  }
+
+  /* Full-width cards - 2:1 aspect ratio */
+  .masonry-item.full-width {
+    grid-column: 1 / -1; /* Explicitly span from first to last column */
+    aspect-ratio: 2; /* 2:1 ratio (width:height) - let aspect-ratio control height */
+  }
+
+  /* Half-height cards - 1:1 aspect ratio (same as squares) */
+  .masonry-item.half-height {
+    aspect-ratio: 1; /* Same as square cards - let aspect-ratio control height */
+  }
+}
+
+/* Parallax performance optimizations */
+.parallax-element {
+  will-change: transform;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.gallery-item {
+  will-change: transform;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* ParallaxImage Component Styles */
+.parallax-image-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.parallax-image-container img {
+  will-change: transform;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* Performance optimizations for parallax */
+.parallax-container {
+  contain: layout style paint;
+  transform: translateZ(0);
+}
+
+.parallax-container img {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
