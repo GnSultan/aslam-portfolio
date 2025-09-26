@@ -1,3 +1,6 @@
+export type Category = 'web' | 'mobile' | 'branding' | 'ui-ux' | 'other';
+export type Status = 'completed' | 'in-progress' | 'concept';
+
 export interface Project {
   id: string;
   title: string;
@@ -5,14 +8,14 @@ export interface Project {
   longDescription?: string;
   image: string;
   images?: string[];
-  category: 'web' | 'mobile' | 'branding' | 'ui-ux' | 'other';
+  category: Category;
   tags: string[];
   technologies: string[];
   year: number;
   client?: string;
   role: string;
   duration?: string;
-  status: 'completed' | 'in-progress' | 'concept';
+  status: Status;
   featured: boolean;
   order: number;
   liveUrl?: string;
@@ -35,14 +38,14 @@ export interface ProjectFormData {
   longDescription?: string;
   image: string;
   images?: string[];
-  category: 'web' | 'mobile' | 'branding' | 'ui-ux' | 'other';
+  category: Category;
   tags: string[];
   technologies: string[];
   year: number;
   client?: string;
   role: string;
   duration?: string;
-  status: 'completed' | 'in-progress' | 'concept';
+  status: Status;
   featured: boolean;
   order: number;
   liveUrl?: string;

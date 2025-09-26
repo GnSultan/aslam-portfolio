@@ -218,3 +218,28 @@
   transform: translateZ(0);
   backface-visibility: hidden;
 }
+
+/* Scrolling text animation */
+@keyframes scroll-right-to-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-scroll-right-to-left {
+  animation: scroll-right-to-left 15s linear infinite;
+  will-change: transform;
+}
+
+/* Hide scrollbar for horizontal scrolling */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

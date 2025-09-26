@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { Project, ProjectFormData } from '@/types/project'
+import { ProjectFormData, Category, Status } from '@/types/project'
 import { createProject, updateProject, getProject } from '@/lib/projects'
 import ImageUpload from './ImageUpload'
 import MultipleImageUpload from './MultipleImageUpload'
@@ -243,7 +243,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
                   <select
                     required
                     value={formData.category}
-                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as any }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as Category }))}
                     className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     {categories.map((category) => (
@@ -274,7 +274,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
                   <select
                     required
                     value={formData.status}
-                    onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as any }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as Status }))}
                     className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     {statuses.map((status) => (

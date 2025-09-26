@@ -2,35 +2,40 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { Project } from '@/types/project'
 import { getProject, getProjects } from '@/lib/projects'
 import Navigation from '@/components/Navigation'
 import ParallaxImage from '@/components/ParallaxImage'
+import Footer from '@/components/Footer'
+import HorizontalScrollCarousel from '@/components/HorizontalScrollCarousel'
+
+
 
 export default function ProjectPage() {
   const params = useParams()
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
-  
+  const [allProjects, setAllProjects] = useState<Project[]>([])
 
   useEffect(() => {
-    const loadProject = () => {
+    const loadData = () => {
       try {
         const projectData = getProject(params.id as string)
+        const allProjectsData = getProjects()
         setProject(projectData)
+        setAllProjects(allProjectsData)
       } catch (error) {
-        console.error('Error loading project:', error)
+        console.error('Error loading data:', error)
       } finally {
         setLoading(false)
       }
     }
 
     if (params.id) {
-      loadProject()
+      loadData()
     }
   }, [params.id])
 
@@ -59,7 +64,7 @@ export default function ProjectPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="h2 mb-4">Project Not Found</h1>
-          <p className="text-text-secondary mb-8">The project you're looking for doesn't exist.</p>
+          <p className="text-text-secondary mb-8">The project you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/projects" className="link-hover">
             ← Back to Projects
           </Link>
@@ -418,80 +423,67 @@ export default function ProjectPage() {
         </section>
       )}
 
-      {/* More Projects Preview */}
+      {/* See More Projects Preview */}
       <section className="section-spaced bg-secondary/30">
-        <div className="container-30-70">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="content-70"
-          >
-            <h2 className="h2 mb-12" data-text-hover>More Projects</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {getProjects()
-                .filter(p => p.id !== project.id)
-                .slice(0, 4)
-                .map((relatedProject, index) => (
-                  <motion.div
-                    key={relatedProject.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="group"
-                  >
-                    <Link href={`/projects/${relatedProject.id}`}>
-                      <div className="bg-background border border-secondary rounded-lg overflow-hidden hover:border-primary/50 transition-colors">
-                        <div className="relative h-48 overflow-hidden">
-                          <Image
-                            src={relatedProject.image}
-                            alt={relatedProject.title}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                          />
-                          {relatedProject.featured && (
-                            <div className="absolute top-4 right-4 bg-primary text-background px-3 py-1 rounded-full text-xs font-medium">
-                              Featured
-                            </div>
-                          )}
-                        </div>
-                        <div className="p-6">
-                          <div className="flex items-center gap-3 mb-3">
-                            <span className="px-3 py-1 bg-secondary text-text-secondary text-xs rounded-full capitalize">
-                              {relatedProject.category}
-                            </span>
-                            <span className="text-text-secondary text-xs">
-                              {relatedProject.year}
-                            </span>
-                          </div>
-                          <h3 className="text-lg font-medium mb-3 group-hover:text-primary transition-colors" data-text-hover>
-                            {relatedProject.title}
-                          </h3>
-                          <p className="text-text-secondary text-sm line-clamp-3 leading-relaxed">
-                            {relatedProject.description}
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
+        {/* Full Width Scrolling Title Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-16 overflow-hidden w-full"
+        >
+          <div className="relative w-full">
+            {/* Scrolling text container */}
+            <div className="flex animate-scroll-right-to-left w-full">
+              {/* First set of words */}
+              <div className="flex items-center gap-12 whitespace-nowrap">
+                <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                  <span className="text-primary/20">*</span>
+                  SEE
+                </span>
+                <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                  <span className="text-primary/20">*</span>
+                  MORE
+                </span>
+                <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                  <span className="text-primary/20">*</span>
+                  SEE
+                </span>
+                <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                  <span className="text-primary/20">*</span>
+                  MORE
+                </span>
+              </div>
+              
+              {/* Duplicate set for seamless loop */}
+              <div className="flex items-center gap-12 whitespace-nowrap ml-24">
+                <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                  <span className="text-primary/20">*</span>
+                  SEE
+                </span>
+                <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                  <span className="text-primary/20">*</span>
+                  MORE
+                </span>
+                <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                  <span className="text-primary/20">*</span>
+                  SEE
+                </span>
+                <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                  <span className="text-primary/20">*</span>
+                  MORE
+                </span>
+              </div>
             </div>
-            
-            <div className="text-center mt-12">
-              <Link 
-                href="/projects" 
-                className="px-8 py-4 bg-text text-background rounded-lg hover:bg-text/90 transition-colors inline-block"
-              >
-                View All Projects
-              </Link>
-            </div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
+
+        <HorizontalScrollCarousel projects={allProjects} currentProjectId={project.id} />
       </section>
+
+      {/* Original Footer */}
+      <Footer />
     </div>
   )
 }

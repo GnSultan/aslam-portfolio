@@ -23,7 +23,7 @@ export default function MultipleImageUpload({
   const handleFileUpload = async (files: FileList) => {
     if (!files || files.length === 0) return
 
-    const newImages: string[] = []
+    // const newImages: string[] = []
     const validFiles: File[] = []
 
     // Validate files

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
+
 import Link from 'next/link'
 import { Project, ProjectFilters } from '@/types/project'
 import { getProjects, getProjectsByCategory } from '@/lib/projects'
