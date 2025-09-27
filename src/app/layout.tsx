@@ -7,7 +7,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import StructuredData from "@/components/StructuredData";
 import CustomCursor from "@/components/CustomCursor";
 import { useCursorStore } from "@/hooks/useCursorStore";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 
 
@@ -16,7 +16,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { setIsHovering, setCursorText, setCursorVariant, isHovering } = useCursorStore();
+  const { setIsHovering, setCursorText, setCursorVariant } = useCursorStore();
+
+  // Memoize the store functions to prevent useEffect dependency changes
+  const memoizedSetIsHovering = useCallback(setIsHovering, [setIsHovering]);
+  const memoizedSetCursorText = useCallback(setCursorText, [setCursorText]);
+  const memoizedSetCursorVariant = useCallback(setCursorVariant, [setCursorVariant]);
 
   useEffect(() => {
     let currentInteractiveElement: HTMLElement | null = null;
@@ -32,15 +37,18 @@ export default function RootLayout({
       }
 
       // Find the closest interactive element
-      const interactiveElement = target.closest('a, button, [data-cursor-hover], [role="button"], [role="link"], input, textarea, select') as HTMLElement ||
-                                (target.hasAttribute('onclick') ? target : null) ||
-                                (target.classList.contains('cursor-pointer') ? target : null);
+        const interactiveElement = target.closest('a, button, [data-cursor-hover], [role="button"], [role="link"]') as HTMLElement ||
+                                  (target.hasAttribute('onclick') ? target : null) ||
+                                  (target.classList.contains('cursor-pointer') ? target : null);
+        
+        // Check for form fields separately (they don't make cursor grow)
+        const formField = target.closest('input, textarea, select') as HTMLElement;
 
-      // If we found a new interactive element
-      if (interactiveElement && interactiveElement !== currentInteractiveElement) {
+      // If we found a new interactive element (but not form fields)
+      if (interactiveElement && interactiveElement !== currentInteractiveElement && !formField) {
         currentInteractiveElement = interactiveElement;
-        setIsHovering(true);
-        setCursorVariant('hover');
+        memoizedSetIsHovering(true);
+        memoizedSetCursorVariant('hover');
 
         // Get cursor text with priority order and smart defaults
         let text = interactiveElement.getAttribute('data-cursor-text') ||
@@ -98,30 +106,52 @@ export default function RootLayout({
           }
         }
 
-        setCursorText(text);
+        memoizedSetCursorText(text);
+      }
+      // If hovering over form fields, keep cursor in default state
+      else if (formField && !interactiveElement) {
+        if (currentInteractiveElement) {
+          currentInteractiveElement = null;
+          memoizedSetIsHovering(false);
+          memoizedSetCursorVariant('default');
+          memoizedSetCursorText('');
+        }
       }
       // If we're no longer over an interactive element, debounce the reset
-      else if (!interactiveElement && currentInteractiveElement) {
+      else if (!interactiveElement && !formField && currentInteractiveElement) {
         debounceTimer = setTimeout(() => {
           currentInteractiveElement = null;
-          setIsHovering(false);
-          setCursorVariant('default');
-          setCursorText('');
+          memoizedSetIsHovering(false);
+          memoizedSetCursorVariant('default');
+          memoizedSetCursorText('');
         }, 50); // Small delay to prevent flickering
       }
     };
 
     const handleMouseDown = (event: MouseEvent) => {
-      if (currentInteractiveElement) {
-        setCursorVariant('click');
+      const target = event.target as HTMLElement;
+      const interactiveElement = target.closest('a, button, [data-cursor-hover]') as HTMLElement;
+      
+      if (interactiveElement) {
+        memoizedSetCursorVariant('click');
+        
+        // Restore default cursor after clicking on buttons only
+        if (interactiveElement.tagName === 'BUTTON') {
+          setTimeout(() => {
+            memoizedSetIsHovering(false);
+            memoizedSetCursorVariant('default');
+            memoizedSetCursorText('');
+            currentInteractiveElement = null;
+          }, 100);
+        }
       }
     };
 
     const handleMouseUp = () => {
       if (currentInteractiveElement) {
-        setCursorVariant('hover');
+        memoizedSetCursorVariant('hover');
       } else {
-        setCursorVariant('default');
+        memoizedSetCursorVariant('default');
       }
     };
 
@@ -139,7 +169,7 @@ export default function RootLayout({
       }
       currentInteractiveElement = null;
     };
-  }, [setIsHovering, setCursorText, setCursorVariant]);
+  }, [memoizedSetIsHovering, memoizedSetCursorText, memoizedSetCursorVariant]);
 
   return (
     <html lang="en">

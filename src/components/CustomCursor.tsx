@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useCursorStore } from '@/hooks/useCursorStore'
 
@@ -132,7 +132,7 @@ export default function CustomCursor() {
     if (hasText) {
       // Slower, more dramatic for text appearance
       return {
-        type: 'spring',
+        type: 'spring' as const,
         damping: 25,
         stiffness: 150,
         mass: 1.2,
@@ -140,7 +140,7 @@ export default function CustomCursor() {
     } else if (cursorVariant === 'click') {
       // Quick, snappy for click feedback
       return {
-        type: 'spring',
+        type: 'spring' as const,
         damping: 15,
         stiffness: 400,
         mass: 0.5,
@@ -148,7 +148,7 @@ export default function CustomCursor() {
     } else {
       // Medium speed for hover states
       return {
-        type: 'spring',
+        type: 'spring' as const,
         damping: 20,
         stiffness: 250,
         mass: 0.8,

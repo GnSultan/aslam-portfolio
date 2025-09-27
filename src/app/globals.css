@@ -15,43 +15,16 @@
 }
 
 @layer base {
-  html {
-    overflow-x: hidden;
-    cursor: none !important;
-  }
+html {
+  overflow-x: hidden;
+}
 
-  *, *::before, *::after {
-    cursor: none !important;
+@media (prefers-reduced-motion: reduce) {
+  .custom-cursor {
+    transition: none !important;
+    animation: none !important;
   }
-
-  body, div, span, a, button, input, textarea, select,
-  h1, h2, h3, h4, h5, h6, p, img, svg, nav, header, footer,
-  ul, li, section, article, aside, main {
-    cursor: none !important;
-  }
-
-  /* Override any inline styles */
-  [style*="cursor"] {
-    cursor: none !important;
-  }
-
-  /* Override focus states */
-  *:hover, *:focus, *:active {
-    cursor: none !important;
-  }
-
-  @media (pointer: coarse) {
-    html, *, *::before, *::after {
-      cursor: auto !important;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .custom-cursor {
-      transition: none !important;
-      animation: none !important;
-    }
-  }
+}
   
   body {
     background-color: var(--background);
