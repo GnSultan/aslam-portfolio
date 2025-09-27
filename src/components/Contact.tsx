@@ -126,6 +126,8 @@ export default function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   required
+                  data-cursor-hover
+                  data-cursor-text="Your Name"
                   className="w-full bg-transparent border-0 border-b border-text/20 focus:border-text focus:outline-none py-3 text-text placeholder-text/40 transition-colors duration-300"
                   placeholder="Name"
                 />
@@ -144,6 +146,8 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  data-cursor-hover
+                  data-cursor-text="Your Email"
                   className="w-full bg-transparent border-0 border-b border-text/20 focus:border-text focus:outline-none py-3 text-text placeholder-text/40 transition-colors duration-300"
                   placeholder="Email"
                 />
@@ -162,6 +166,8 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   rows={4}
+                  data-cursor-hover
+                  data-cursor-text="Your Message"
                   className="w-full bg-transparent border-0 border-b border-text/20 focus:border-text focus:outline-none py-3 text-text placeholder-text/40 transition-colors duration-300 resize-none"
                   placeholder="Message"
                 />
@@ -176,6 +182,8 @@ export default function Contact() {
               >
                 <button
                   type="submit"
+                  data-cursor-hover
+                  data-cursor-text="Submit"
                   className="text-text hover:text-primary transition-colors duration-300 group"
                 >
                   <span className="text-lg font-light">Send Message</span>

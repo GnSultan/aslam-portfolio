@@ -121,7 +121,7 @@ export default function Navigation() {
       </AnimatePresence>
 
       <header 
-        className={`fixed top-0 left-0 right-0 z-50 bg-background border-b border-secondary/20 transition-all duration-500 ease-in-out ${
+        className={`fixed top-0 left-0 right-0 z-50 bg-background border-b border-secondary/20 transition-all duration-500 ease-in-out ${ 
           isVisible 
             ? 'translate-y-0 opacity-100' 
             : '-translate-y-full opacity-0'
@@ -130,54 +130,58 @@ export default function Navigation() {
       >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className={`text-xl font-semibold text-text focus:outline-none rounded transition-all duration-500 ease-out ${
               isVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
             }`}
             aria-label="Aslam - Home"
+            data-cursor-text="Home"
           >
             Aslam
           </Link>
           
           {/* Desktop Navigation */}
           <nav 
-            className={`hidden md:flex items-center space-x-8 transition-all duration-500 ease-out delay-100 ${
+            className={`hidden md:flex items-center space-x-8 transition-all duration-500 ease-out delay-100 ${ 
               isVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
             }`}
             role="navigation"
             aria-label="Main navigation"
           >
-            <button 
+            <button
               onClick={() => navigateToSection('hero')}
               className={`text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1 relative ${
-                currentSection === 'hero' 
-                  ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current' 
+                currentSection === 'hero'
+                  ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current'
                   : 'link-hover'
               }`}
               aria-label="Navigate to Home section"
+              data-cursor-text="Go to Home"
             >
               Home
             </button>
-            <button 
+            <button
               onClick={() => navigateToSection('projects')}
               className={`text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1 relative ${
-                currentSection === 'projects' 
-                  ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current' 
+                currentSection === 'projects'
+                  ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current'
                   : 'link-hover'
               }`}
               aria-label="Navigate to Work section"
+              data-cursor-text="View Work"
             >
               Work
             </button>
-            <button 
+            <button
               onClick={() => navigateToSection('about')}
               className={`text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1 relative ${
-                currentSection === 'about' 
-                  ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current' 
+                currentSection === 'about'
+                  ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current'
                   : 'link-hover'
               }`}
               aria-label="Navigate to About section"
+              data-cursor-text="About Me"
             >
               About
             </button>
@@ -185,7 +189,7 @@ export default function Navigation() {
 
           {/* Desktop Social Links & Contact */}
           <div 
-            className={`hidden md:flex items-center space-x-6 transition-all duration-500 ease-out delay-200 ${
+            className={`hidden md:flex items-center space-x-6 transition-all duration-500 ease-out delay-200 ${ 
               isVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
             }`}
             role="complementary"
@@ -197,6 +201,7 @@ export default function Navigation() {
               rel="noopener noreferrer"
               className="text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1"
               aria-label="Visit Aslam's GitHub profile (opens in new tab)"
+              data-cursor-text="GitHub"
             >
               Github
             </a>
@@ -206,6 +211,7 @@ export default function Navigation() {
               rel="noopener noreferrer"
               className="text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1"
               aria-label="Visit Aslam's LinkedIn profile (opens in new tab)"
+              data-cursor-text="LinkedIn"
             >
               LinkedIn
             </a>
@@ -213,6 +219,7 @@ export default function Navigation() {
               href="mailto:hello@aslam.com"
               className="text-text/70 hover:text-primary transition-colors duration-300 link-hover focus:outline-none rounded px-2 py-1"
               aria-label="Send email to Aslam"
+              data-cursor-text="Say Hello"
             >
               Contact
             </a>
@@ -228,7 +235,7 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMobileMenu}
-            className={`md:hidden p-2 rounded-lg hover:bg-secondary/50 focus:outline-none transition-all duration-500 ease-out delay-100 ${
+            className={`md:hidden p-2 rounded-lg hover:bg-secondary/50 focus:outline-none transition-all duration-500 ease-out delay-100 ${ 
               isVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
             }`}
             aria-label="Toggle mobile menu"
@@ -255,7 +262,7 @@ export default function Navigation() {
             <nav className="py-4 space-y-2" role="navigation" aria-label="Mobile navigation">
               <button
                 onClick={() => navigateToSection('hero')}
-                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
+                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${ 
                   currentSection === 'hero' ? 'text-text font-medium bg-secondary/20' : ''
                 }`}
               >
@@ -263,7 +270,7 @@ export default function Navigation() {
               </button>
               <button
                 onClick={() => navigateToSection('projects')}
-                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
+                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${ 
                   currentSection === 'projects' ? 'text-text font-medium bg-secondary/20' : ''
                 }`}
               >
@@ -271,7 +278,7 @@ export default function Navigation() {
               </button>
               <button
                 onClick={() => navigateToSection('about')}
-                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
+                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${ 
                   currentSection === 'about' ? 'text-text font-medium bg-secondary/20' : ''
                 }`}
               >

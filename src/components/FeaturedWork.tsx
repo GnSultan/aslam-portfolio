@@ -109,6 +109,7 @@ export default function FeaturedWork() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: projects.length * 0.1 }}
               data-cursor-hover
+              data-cursor-text="Explore"
               className="w-full mt-8 p-4 text-text/70 hover:text-text transition-colors duration-300 text-left flex items-center gap-2 group"
             >
               <span className="text-lg font-medium">Explore Work</span>
