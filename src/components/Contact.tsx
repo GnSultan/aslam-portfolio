@@ -1,17 +1,9 @@
 'use client'
 
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useState, useRef } from 'react'
+import { motion } from 'framer-motion'
+import { useState } from 'react'
 
 export default function Contact() {
-  const lastSectionRef = useRef<HTMLElement>(null)
-  
-  const { scrollYProgress } = useScroll({
-    target: lastSectionRef,
-    offset: ["end end", "end start"], 
-  })
-
-  const y = useTransform(scrollYProgress, [0, 1], [0, "-100%"])
 
   const [formData, setFormData] = useState({
     name: '',
@@ -35,10 +27,8 @@ export default function Contact() {
   }
 
   return (
-    <motion.section
-      ref={lastSectionRef}
-      style={{ y }}
-      className="section-spaced relative z-20"
+    <section
+      className="section-spaced relative"
       id="contact"
     >
       <div className="container-wide">
@@ -201,6 +191,6 @@ export default function Contact() {
           </motion.div>
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }

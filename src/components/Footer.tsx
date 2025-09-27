@@ -1,25 +1,11 @@
 'use client'
 
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
-
 export default function Footer() {
   const currentYear = new Date().getFullYear()
-  const footerRef = useRef<HTMLElement>(null)
-  
-  const { scrollYProgress } = useScroll({
-    target: footerRef,
-    offset: ["start end", "end end"],
-  })
-
-  // Shift the footer upward as scroll progresses
-  const y = useTransform(scrollYProgress, [0, 1], ["100%", "0%"])
 
   return (
-    <motion.footer
-      ref={footerRef}
+    <footer
       style={{
-        y,
         backgroundColor: 'var(--footer)',
         backgroundImage: 'linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px)',
         backgroundSize: '200px 200px',
@@ -81,6 +67,6 @@ export default function Footer() {
           </p>
         </div>
       </div>
-    </motion.footer>
+    </footer>
   )
 }
