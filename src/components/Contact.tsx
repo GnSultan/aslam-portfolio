@@ -40,7 +40,7 @@ export default function Contact() {
           transition={{ duration: 0.6 }}
           className="h2 mb-6"
         >
-          Get In Touch
+          Let&apos;s Talk
         </motion.h2>
         
         {/* Full-width line separator */}
@@ -71,17 +71,17 @@ export default function Contact() {
               <div>
                 <h3 className="text-lg font-medium text-text mb-2">Email</h3>
                 <a 
-                  href="mailto:hello@example.com" 
+                  href="mailto:hello@imaslam.com" 
                   className="text-text-secondary hover:text-primary transition-colors duration-300"
                 >
-                  hello@example.com
+                  hello@imaslam.com
                 </a>
               </div>
               
               <div>
                 <h3 className="text-lg font-medium text-text mb-2">Location</h3>
                 <p className="text-text-secondary">
-                  San Francisco, CA
+                  Arusha, Tanzania
                 </p>
               </div>
               

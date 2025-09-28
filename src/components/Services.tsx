@@ -5,24 +5,24 @@ import Image from 'next/image'
 
 const services = [
   {
-    icon: '/icons/digital-design.svg',
-    title: 'Digital Design',
-    description: 'An expert in digital design, I create engaging user interfaces that are both functional and aesthetically pleasing.',
+    icon: '/icons/brand-strategy.svg',
+    title: 'Brand Strategy & Identity',
+    description: 'Defining purpose, vision, and crafting cohesive visual systems that connect.',
   },
   {
-    icon: '/icons/product-strategy.svg',
-    title: 'Product Strategy',
-    description: 'Defining product vision, aligning the user needs, and setting clear goals for the product.',
+    icon: '/icons/product-design.svg',
+    title: 'Product Design',
+    description: 'Designing intuitive and engaging digital experiences for web and applications.',
   },
   {
-    icon: '/icons/framer-expert.svg',
-    title: 'Framer Expert',
-    description: 'The use of electric, where I have been very successful, and I have been very successful, and I have been very successful.',
+    icon: '/icons/web-development.svg',
+    title: 'Web & Product Development',
+    description: 'Building custom websites and scalable web applications from front-end to back-end.',
   },
   {
-    icon: '/icons/art-direction.svg',
-    title: 'Art Direction',
-    description: 'Establishing a strong visual tone and style that represents the brand and communicates the message.',
+    icon: '/icons/digital-experiences.svg',
+    title: 'Digital Experiences',
+    description: 'Creating polished, modern, and user-friendly web solutions that reflect your brand.',
   },
 ]
 
