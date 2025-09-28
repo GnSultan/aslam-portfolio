@@ -8,6 +8,7 @@ import { Project, ProjectFilters } from '@/types/project'
 import { getProjects, getProjectsByCategory } from '@/lib/projects'
 import Navigation from '@/components/Navigation'
 import ParallaxImage from '@/components/ParallaxImage'
+import GlobalFooterReveal from '@/components/GlobalFooterReveal'
 
 const categories = [
   { value: 'all', label: 'All Projects' },
@@ -219,6 +220,24 @@ export default function ProjectsPage() {
           )}
         </div>
       </section>
+
+      {/* Footer Reveal Effect */}
+      <GlobalFooterReveal>
+        <div className="section-spaced">
+          <div className="container-wide text-center">
+            <h2 className="h2 mb-6">Ready to work together?</h2>
+            <p className="text-xl text-text-secondary leading-relaxed max-w-2xl mx-auto mb-8">
+              Let's discuss your next project and bring your ideas to life.
+            </p>
+            <a 
+              href="mailto:hello@aslam.com" 
+              className="inline-block px-8 py-4 bg-text text-background rounded-lg hover:bg-text/90 transition-colors"
+            >
+              Get in Touch
+            </a>
+          </div>
+        </div>
+      </GlobalFooterReveal>
     </div>
   )
 }

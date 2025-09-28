@@ -4,7 +4,6 @@
 import "./fonts.css";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
-import GlobalFooterReveal from "@/components/GlobalFooterReveal";
 import StructuredData from "@/components/StructuredData";
 import CustomCursor from "@/components/CustomCursor";
 import { useCursorStore } from "@/hooks/useCursorStore";
@@ -179,9 +178,7 @@ export default function RootLayout({
       </head>
       <body>
         <CustomCursor />
-        <SmoothScroll>
-          <GlobalFooterReveal>{children}</GlobalFooterReveal>
-        </SmoothScroll>
+        <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
   );

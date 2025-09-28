@@ -8,7 +8,7 @@ import Experience from '@/components/Experience'
 import Services from '@/components/Services'
 import Gallery from '@/components/Gallery'
 import Contact from '@/components/Contact'
-import Footer from '@/components/Footer'
+import GlobalFooterReveal from '@/components/GlobalFooterReveal'
 
 export default function Home() {
   return (
@@ -21,8 +21,10 @@ export default function Home() {
       <Services />
       <Gallery />
 
-      {/* Contact as last section; global footer reveal wraps in layout */}
-      <Contact />
+      {/* Footer Reveal Effect */}
+      <GlobalFooterReveal>
+        <Contact />
+      </GlobalFooterReveal>
     </main>
   )
 }

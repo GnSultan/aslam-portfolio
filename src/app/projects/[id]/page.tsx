@@ -9,6 +9,7 @@ import { getProject, getProjects } from '@/lib/projects'
 import Navigation from '@/components/Navigation'
 import ParallaxImage from '@/components/ParallaxImage'
 import Footer from '@/components/Footer'
+import GlobalFooterReveal from '@/components/GlobalFooterReveal'
 import HorizontalScrollCarousel from '@/components/HorizontalScrollCarousel'
 
 
@@ -482,7 +483,23 @@ export default function ProjectPage() {
         <HorizontalScrollCarousel projects={allProjects} currentProjectId={project.id} />
       </section>
 
-      {/* Footer is globally revealed via layout */}
+      {/* Footer Reveal Effect for project pages */}
+      <GlobalFooterReveal>
+        <section className="section-spaced">
+          <div className="container-wide text-center">
+            <h2 className="h2 mb-6">Let’s build something great</h2>
+            <p className="text-xl text-text-secondary leading-relaxed max-w-2xl mx-auto mb-8">
+              Have a project like this in mind? I’d love to hear about it.
+            </p>
+            <a 
+              href="mailto:hello@aslam.com" 
+              className="inline-block px-8 py-4 bg-text text-background rounded-lg hover:bg-text/90 transition-colors"
+            >
+              Get in Touch
+            </a>
+          </div>
+        </section>
+      </GlobalFooterReveal>
     </div>
   )
 }

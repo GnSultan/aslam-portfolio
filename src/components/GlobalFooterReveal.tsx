@@ -9,9 +9,10 @@ interface GlobalFooterRevealProps {
   animationRange?: [number, number]
   slideDistance?: number
   containerHeight?: string
-  excludePaths?: string[]
 }
 
+// Page-level wrapper that creates footer reveal effect
+// Wraps the last section and places footer underneath
 export default function GlobalFooterReveal({
   children,
   animationRange = [0.4, 1],
@@ -26,12 +27,11 @@ export default function GlobalFooterReveal({
   })
 
   const lastSectionY = useTransform(scrollYProgress, animationRange, [0, -Math.abs(slideDistance)])
-
-  // Memoize wrapper styles to avoid reflows
   const wrapperStyle = useMemo(() => ({ height: containerHeight }), [containerHeight])
 
   return (
     <div ref={containerRef} className="relative" style={wrapperStyle}>
+      {/* Last Section - Slides up gradually */}
       <motion.div
         style={{ y: lastSectionY, willChange: 'transform', zIndex: 10 }}
         className="relative bg-background min-h-screen"
@@ -39,6 +39,7 @@ export default function GlobalFooterReveal({
         {children}
       </motion.div>
 
+      {/* Footer - Absolutely positioned at container bottom, never moves */}
       <div className="absolute bottom-0 left-0 w-full" style={{ zIndex: 1 }}>
         <Footer />
       </div>
