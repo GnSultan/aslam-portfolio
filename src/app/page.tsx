@@ -9,7 +9,6 @@ import Services from '@/components/Services'
 import Gallery from '@/components/Gallery'
 import Contact from '@/components/Contact'
 import Footer from '@/components/Footer'
-import FooterReveal from '@/components/FooterReveal'
 
 export default function Home() {
   return (
@@ -22,10 +21,8 @@ export default function Home() {
       <Services />
       <Gallery />
 
-      {/* Footer Reveal Effect */}
-      <FooterReveal footer={<Footer />}>
-        <Contact />
-      </FooterReveal>
+      {/* Contact as last section; global footer reveal wraps in layout */}
+      <Contact />
     </main>
   )
 }

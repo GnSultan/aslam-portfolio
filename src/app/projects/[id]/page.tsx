@@ -482,8 +482,7 @@ export default function ProjectPage() {
         <HorizontalScrollCarousel projects={allProjects} currentProjectId={project.id} />
       </section>
 
-      {/* Original Footer */}
-      <Footer />
+      {/* Footer is globally revealed via layout */}
     </div>
   )
 }
