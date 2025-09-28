@@ -40,10 +40,13 @@ export default function About() {
             >
             <div className="space-y-6">
               <p className="text-xl leading-relaxed text-text-secondary" data-text-hover>
-                Hi, I&apos;m Aslam, an art director and product designer based in London. With my background in visual arts and technology, I specialize in creating engaging user experiences through interactive design.
+              Hi, I&apos;m Aslam—a brand strategist, designer, and developer. I build digital products that unite strategy, design, and technology, helping ideas grow into experiences that truly matter.
               </p>
               <p className="text-xl leading-relaxed text-text-secondary" data-text-hover>
-                I am deeply passionate about using my creative skills to collaborate on innovative and meaningful projects that make a genuine impact.
+With a foundation in branding and storytelling, I bring clarity and intention to every project. By combining that with technical expertise, I transform ideas into custom websites and full-scale web applications that are not only functional but purposeful.
+              </p>
+              <p className="text-xl leading-relaxed text-text-secondary" data-text-hover>
+My approach is simple: start with why, design with empathy, and build with precision. Whether it&apos;s shaping a brand identity, crafting a user experience, or developing a product from the ground up, I focus on creating digital solutions that inspire trust, foster connection, and deliver lasting impact.
               </p>
             </div>
           </motion.div>
@@ -57,7 +60,7 @@ export default function About() {
             className="order-1 lg:order-2 lg:col-span-7 relative"
           >
             <ParallaxImage
-              src="/portrait.jpg"
+              src="/aslam-portrait.jpg"
               alt="Portrait photo of Aslam, art director and product designer"
               fill
               speed={-0.6}
