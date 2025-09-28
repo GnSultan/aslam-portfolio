@@ -48,65 +48,32 @@ export default function RootLayout({
       if (interactiveElement && interactiveElement !== currentInteractiveElement && !formField) {
         currentInteractiveElement = interactiveElement;
         memoizedSetIsHovering(true);
-        memoizedSetCursorVariant('hover');
 
-        // Get cursor text with priority order and smart defaults
-        let text = interactiveElement.getAttribute('data-cursor-text') ||
-                  interactiveElement.getAttribute('aria-label') ||
-                  interactiveElement.getAttribute('title') ||
-                  '';
+        const href = interactiveElement.getAttribute('href') || '';
+        const className = interactiveElement.className || '';
+        const parentClasses = interactiveElement.closest('[class*="gallery"], [class*="project"], [class*="work"], [class*="portfolio"]')?.className || '';
 
-        // Use element's text content as cursor text if no custom text specified
-        if (!text) {
-          const elementText = interactiveElement.textContent?.trim() || '';
-          const href = interactiveElement.getAttribute('href') || '';
-          const className = interactiveElement.className || '';
-          const parentClasses = interactiveElement.closest('[class*="gallery"], [class*="project"], [class*="work"], [class*="portfolio"]')?.className || '';
+        // Check if this is a portfolio/project/gallery related element
+        const isPortfolioElement = href.includes('/projects/') ||
+                                 className.includes('project') ||
+                                 className.includes('gallery') ||
+                                 className.includes('work') ||
+                                 className.includes('portfolio') ||
+                                 parentClasses.includes('gallery') ||
+                                 parentClasses.includes('project') ||
+                                 parentClasses.includes('work') ||
+                                 parentClasses.includes('portfolio') ||
+                                 interactiveElement.closest('#gallery') ||
+                                 interactiveElement.closest('[id*="project"]') ||
+                                 interactiveElement.closest('[id*="work"]');
 
-          // Check if this is a portfolio/project/gallery related element
-          const isPortfolioElement = href.includes('/projects/') ||
-                                   className.includes('project') ||
-                                   className.includes('gallery') ||
-                                   className.includes('work') ||
-                                   className.includes('portfolio') ||
-                                   parentClasses.includes('gallery') ||
-                                   parentClasses.includes('project') ||
-                                   parentClasses.includes('work') ||
-                                   parentClasses.includes('portfolio') ||
-                                   interactiveElement.closest('#gallery') ||
-                                   interactiveElement.closest('[id*="project"]') ||
-                                   interactiveElement.closest('[id*="work"]');
-
-          if (isPortfolioElement) {
-            text = 'View';
-          } else if (interactiveElement.tagName === 'BUTTON') {
-            // Special handling for buttons
-            const buttonType = interactiveElement.getAttribute('type') || '';
-            const buttonText = elementText.toLowerCase();
-
-            if (buttonType === 'submit' || buttonText.includes('submit') || buttonText.includes('send')) {
-              text = 'Submit';
-            } else if (elementText && elementText.length <= 15) {
-              text = elementText;
-            } else if (elementText && elementText.length > 15) {
-              text = elementText.substring(0, 12) + '...';
-            } else {
-              text = 'Button';
-            }
-          } else if (elementText && elementText.length <= 15) {
-            // Use the actual text content if it's short enough
-            text = elementText;
-          } else if (elementText && elementText.length > 15) {
-            // Truncate long text
-            text = elementText.substring(0, 12) + '...';
-          } else if (interactiveElement.tagName === 'A' || interactiveElement.getAttribute('href')) {
-            text = 'Link';
-          } else {
-            text = 'Click';
-          }
+        if (isPortfolioElement) {
+          memoizedSetCursorVariant('hover');
+          memoizedSetCursorText('View');
+        } else {
+          memoizedSetCursorVariant('hover');
+          memoizedSetCursorText('');
         }
-
-        memoizedSetCursorText(text);
       }
       // If hovering over form fields, keep cursor in default state
       else if (formField && !interactiveElement) {
@@ -133,7 +100,26 @@ export default function RootLayout({
       const interactiveElement = target.closest('a, button, [data-cursor-hover]') as HTMLElement;
       
       if (interactiveElement) {
-        memoizedSetCursorVariant('click');
+        const href = interactiveElement.getAttribute('href') || '';
+        const className = interactiveElement.className || '';
+        const parentClasses = interactiveElement.closest('[class*="gallery"], [class*="project"], [class*="work"], [class*="portfolio"]')?.className || '';
+
+        const isPortfolioElement = href.includes('/projects/') ||
+                                 className.includes('project') ||
+                                 className.includes('gallery') ||
+                                 className.includes('work') ||
+                                 className.includes('portfolio') ||
+                                 parentClasses.includes('gallery') ||
+                                 parentClasses.includes('project') ||
+                                 parentClasses.includes('work') ||
+                                 parentClasses.includes('portfolio') ||
+                                 interactiveElement.closest('#gallery') ||
+                                 interactiveElement.closest('[id*="project"]') ||
+                                 interactiveElement.closest('[id*="work"]');
+
+        if (isPortfolioElement) {
+          memoizedSetCursorVariant('click');
+        }
         
         // Restore default cursor after clicking on buttons only
         if (interactiveElement.tagName === 'BUTTON') {

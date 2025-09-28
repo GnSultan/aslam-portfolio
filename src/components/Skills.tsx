@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 const skills = [
   {
     name: 'Brand Strategy',
-    percentage: '85%',
+    percentage: '98%',
     description: 'Building foundations that make brands connect',
   },
   {
@@ -20,12 +20,12 @@ const skills = [
   },
   {
     name: 'Custom Web Applications',
-    percentage: '80%',
+    percentage: '88%',
     description: 'Building products that solve real problems',
   },
   {
     name: 'Digital Experiences',
-    percentage: '80%',
+    percentage: '99%',
     description: 'Crafting modern websites that just work',
   },
 ]
