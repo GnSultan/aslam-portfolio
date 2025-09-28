@@ -73,8 +73,8 @@ export default function CustomCursor() {
       const circleSize = getCircleSize(cursorText)
       return {
         size: { width: `${circleSize}px`, height: `${circleSize}px`, padding: '0' },
-        background: '#ffffff',
-        color: '#000000',
+        background: '#0F0F0F',
+        color: '#FAFAFA',
         borderRadius: '50%',
         fontSize: '18px',
         fontWeight: '800',
