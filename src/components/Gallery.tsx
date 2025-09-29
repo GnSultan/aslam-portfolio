@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence, useMotionValue, PanInfo } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue, PanInfo, useSpring } from 'framer-motion'
 import Image from 'next/image'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { getProjects } from '@/lib/projects'
@@ -25,6 +25,16 @@ export default function Gallery() {
   // Direct motion value - no spring layers
   const x = useMotionValue(0)
   const animationRef = useRef<number | undefined>(undefined)
+
+  // Parallax effect motion values with smooth spring
+  const parallaxTarget = useMotionValue(0)
+  const parallaxOffset = useSpring(parallaxTarget, {
+    damping: 25,
+    stiffness: 200,
+    mass: 0.8,
+    restSpeed: 0.1,
+    restDelta: 0.1
+  })
 
 
 
@@ -107,12 +117,21 @@ export default function Gallery() {
 
   const handleDrag = useCallback((_event: any, info: PanInfo) => {
     setDragDistance(prev => prev + Math.abs(info.delta.x))
-  }, [])
+
+    // Apply subtle parallax offset (opposite direction, minimal for natural depth effect)
+    const maxParallaxOffset = 12
+    const parallaxMultiplier = 0.25
+    const newParallaxOffset = Math.max(-maxParallaxOffset, Math.min(maxParallaxOffset, -info.delta.x * parallaxMultiplier))
+    parallaxTarget.set(parallaxTarget.get() + newParallaxOffset)
+  }, [parallaxTarget])
 
   const handleDragEnd = useCallback(() => {
     setIsDragging(false)
     // Let Framer Motion handle all momentum naturally - no position manipulation
-  }, [])
+
+    // Smoothly return parallax offset to center using Framer Motion's spring
+    parallaxTarget.set(0)
+  }, [parallaxTarget])
 
   // Handle image click for fullscreen
   const handleImageClick = useCallback((image: GalleryImage, index: number) => {
@@ -252,19 +271,27 @@ export default function Gallery() {
                 }}
               >
                 <div className="relative w-full h-full overflow-hidden rounded-lg">
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    sizes="(max-width: 768px) 600px, 600px"
-                    quality={90}
-                    priority={index < 4}
-                    onError={(e) => {
-                      console.error('Image failed to load:', image.src)
-                      e.currentTarget.src = '/placeholders/rejuvenate-mockup.jpg'
+                  <motion.div
+                    className="w-full h-full"
+                    style={{
+                      x: parallaxOffset,
+                      scale: 1.08, // Subtle scale up to contain minimal parallax movement
                     }}
-                  />
+                  >
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      sizes="(max-width: 768px) 600px, 600px"
+                      quality={90}
+                      priority={index < 4}
+                      onError={(e) => {
+                        console.error('Image failed to load:', image.src)
+                        e.currentTarget.src = '/placeholders/rejuvenate-mockup.jpg'
+                      }}
+                    />
+                  </motion.div>
 
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
