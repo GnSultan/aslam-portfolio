@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Project } from '@/types/project'
 import { getFeaturedProjects } from '@/lib/projects'
 import ParallaxImage from './ParallaxImage'
@@ -10,7 +10,9 @@ import ParallaxImage from './ParallaxImage'
 export default function FeaturedWork() {
   const [projects, setProjects] = useState<Project[]>([])
   const [activeProject, setActiveProject] = useState<Project | null>(null)
-  
+  const [hoveredProject, setHoveredProject] = useState<Project | null>(null)
+  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const currentHoveredProject = useRef<Project | null>(null)
 
   useEffect(() => {
     const loadProjects = () => {
@@ -26,6 +28,48 @@ export default function FeaturedWork() {
     }
 
     loadProjects()
+  }, [])
+
+  // Intentional hover handlers with delay
+  const handleProjectHover = useCallback((project: Project) => {
+    // Set immediate hover state for visual feedback
+    setHoveredProject(project)
+
+    // Clear any existing timer
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current)
+    }
+
+    currentHoveredProject.current = project
+
+    // Only change active project after a deliberate hover delay
+    hoverTimerRef.current = setTimeout(() => {
+      // Only update if user is still hovering the same project
+      if (currentHoveredProject.current === project) {
+        setActiveProject(project)
+      }
+    }, 200) // 200ms delay to ensure intentional hover
+  }, [])
+
+  const handleProjectLeave = useCallback(() => {
+    // Clear immediate hover state
+    setHoveredProject(null)
+
+    // Clear the timer when leaving
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current)
+      hoverTimerRef.current = null
+    }
+    currentHoveredProject.current = null
+  }, [])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) {
+        clearTimeout(hoverTimerRef.current)
+      }
+    }
   }, [])
 
   // Don't render if no projects
@@ -75,7 +119,8 @@ export default function FeaturedWork() {
             {projects.map((project, index) => (
               <motion.div
                 key={project.id}
-                onMouseEnter={() => setActiveProject(project)}
+                onMouseEnter={() => handleProjectHover(project)}
+                onMouseLeave={handleProjectLeave}
                 data-project-hover
                 className="w-full"
                 initial={{ opacity: 0, y: 20 }}
@@ -87,9 +132,12 @@ export default function FeaturedWork() {
                   href={`/projects/${project.id}`}
                   className={`block w-full text-left p-4 rounded-lg transition-all duration-300 relative group ${
                     activeProject?.id === project.id
-                      ? 'text-text'
-                      : 'text-text/70 hover:text-text'
+                      ? 'text-text bg-secondary/10'
+                      : hoveredProject?.id === project.id
+                        ? 'text-text bg-secondary/5'
+                        : 'text-text/70 hover:text-text'
                   }`}
+                  data-cursor-text="View"
                   data-magnetic
                 >
                   <div className="flex items-center justify-between">
@@ -114,9 +162,23 @@ export default function FeaturedWork() {
                   </div>
 
                   {/* Active bar like navigation */}
-                  <div className={`absolute bottom-0 left-0 w-0 h-[1px] bg-current transition-all duration-300 ${
-                    activeProject?.id === project.id ? 'w-full' : ''
+                  <div className={`absolute bottom-0 left-0 h-[1px] bg-current transition-all duration-300 ${
+                    activeProject?.id === project.id
+                      ? 'w-full'
+                      : hoveredProject?.id === project.id
+                        ? 'w-1/3 opacity-50'
+                        : 'w-0'
                   }`} />
+
+                  {/* Hover intent indicator */}
+                  {hoveredProject?.id === project.id && activeProject?.id !== project.id && (
+                    <motion.div
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute bottom-0 left-0 w-full h-[1px] bg-primary/30 origin-left"
+                    />
+                  )}
                 </Link>
               </motion.div>
             ))}
@@ -171,13 +233,17 @@ export default function FeaturedWork() {
                 }}
                 className="relative w-[480px] lg:w-[520px] h-[600px] mx-auto"
               >
-                <Link href={`/projects/${activeProject.id}`}>
+                <Link
+                  href={`/projects/${activeProject.id}`}
+                  data-cursor-text="View"
+                  className="block w-full h-full rounded-lg overflow-hidden"
+                >
                   <ParallaxImage
                     src={activeProject.image}
                     alt={`${activeProject.title} project mockup`}
                     fill
                     speed={-0.8}
-                    className="object-cover hover:scale-105 transition-transform duration-300"
+                    className="object-cover hover:scale-105 transition-transform duration-500"
                     containerClassName="relative w-full h-full"
                     sizes="(max-width: 768px) 100vw, 50vw"
                     quality={90}
