@@ -333,6 +333,7 @@ export default function CustomCursor() {
 
   const getCircleSize = (text: string) => {
     if (!text || text.trim() === '') return 40
+    if (text === 'Drag') return 140 // Larger for arrows + text
     return 115
   }
 
@@ -483,7 +484,24 @@ export default function CustomCursor() {
           }
         }}
       >
-        {hasText ? cursorText : ''}
+        {hasText && (
+          <div className="flex items-center gap-1">
+            {cursorText === 'Drag' && (
+              <>
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                <span className="font-bold text-sm">{cursorText}</span>
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+                </svg>
+              </>
+            )}
+            {cursorText !== 'Drag' && (
+              <span className="font-bold text-sm">{cursorText}</span>
+            )}
+          </div>
+        )}
       </motion.div>
     </>
   )

@@ -115,10 +115,28 @@ html {
   .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+    /* iOS-style momentum scrolling */
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    /* Contain scrolling to prevent bounce */
+    overscroll-behavior-x: contain;
   }
-  
+
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Gallery cursor persistence */
+  .gallery-container * {
+    cursor: inherit !important;
+  }
+
+  .gallery-container[data-cursor-text="Drag"] {
+    cursor: grab;
+  }
+
+  .gallery-container[data-cursor-text="Drag"]:active {
+    cursor: grabbing;
   }
 
   /* Keyboard cursor animation */
