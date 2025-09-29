@@ -59,10 +59,10 @@ export default function CustomCursor() {
 
   const getCircleSize = (text: string) => {
     // Unified large size for all interactive elements with text
-    if (!text || text.trim() === '') return 48
+    if (!text || text.trim() === '') return 40
 
     // Much larger size for dramatic effect
-    return 140
+    return 115
   }
 
   const getCursorStyles = () => {
@@ -87,7 +87,7 @@ export default function CustomCursor() {
     switch (cursorVariant) {
       case 'hover':
         return {
-          size: { width: '60px', height: '60px', padding: '0' },
+          size: { width: '50px', height: '50px', padding: '0' },
           background: '#ffffff',
           color: 'transparent',
           borderRadius: '50%',

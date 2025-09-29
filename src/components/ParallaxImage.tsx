@@ -33,32 +33,46 @@ export default function ParallaxImage({
 }: ParallaxImageProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isInView, setIsInView] = useState(false)
-  
+  const [isInitialized, setIsInitialized] = useState(false)
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 0.8", "end -0.2"] // Extend the scroll range beyond viewport
   })
-  
+
   // Apply parallax with extended range to prevent reset
   const y = useTransform(scrollYProgress, [0, 1], [speed * 100, speed * -100])
-  
+
   // Check if element is in viewport for performance optimization
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsInView(entry.isIntersecting)
+        if (entry.isIntersecting && !isInitialized) {
+          setIsInitialized(true)
+        }
       },
-      { 
+      {
         threshold: 0.1,
         rootMargin: "50% 0px 50% 0px" // Extend the intersection area
       }
     )
-    
+
     if (containerRef.current) {
       observer.observe(containerRef.current)
     }
-    
+
     return () => observer.disconnect()
+  }, [isInitialized])
+
+  // Initialize on mount to handle page load scenarios
+  useEffect(() => {
+    // Small delay to ensure proper initialization
+    const timer = setTimeout(() => {
+      setIsInitialized(true)
+    }, 100)
+
+    return () => clearTimeout(timer)
   }, [])
   
   return (
@@ -67,7 +81,7 @@ export default function ParallaxImage({
       className={`relative overflow-hidden ${containerClassName}`}
     >
       <motion.div
-        style={{ y: isInView ? y : 0 }}
+        style={{ y: isInitialized ? y : 0 }}
         className="w-full h-full"
       >
         {fill ? (

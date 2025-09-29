@@ -16,8 +16,17 @@ export default function Navigation() {
   }
 
   const navigateToSection = (sectionId: string) => {
+    // Check if we're on the home page
+    const isOnHomePage = window.location.pathname === '/'
+
+    if (!isOnHomePage) {
+      // If not on home page, navigate to home page with hash
+      window.location.href = `/#${sectionId}`
+      return
+    }
+
     if (sectionId === currentSection) return
-    
+
     // Reset navigation state to ensure transition works every time
     setIsNavigating(false)
     setTimeout(() => {
@@ -25,7 +34,7 @@ export default function Navigation() {
       setCurrentSection(sectionId)
       setIsMobileMenuOpen(false)
     }, 10)
-    
+
     // Create page-like transition effect
     setTimeout(() => {
       const element = document.getElementById(sectionId)
@@ -34,13 +43,13 @@ export default function Navigation() {
         if (typeof window !== 'undefined' && (window as unknown as { lenis?: { stop: () => void, start: () => void } }).lenis) {
           (window as unknown as { lenis: { stop: () => void, start: () => void } }).lenis.stop()
         }
-        
+
         // Instantly position to the section
         window.scrollTo({
           top: element.offsetTop - 80,
           behavior: 'instant'
         })
-        
+
         // Re-enable Lenis after positioning
         setTimeout(() => {
           if (typeof window !== 'undefined' && (window as unknown as { lenis?: { start: () => void } }).lenis) {
@@ -51,6 +60,26 @@ export default function Navigation() {
       }
         }, 260) // Half of transition duration + reset delay
   }
+
+  // Handle hash navigation on page load
+  useEffect(() => {
+    const handleHashNavigation = () => {
+      const hash = window.location.hash.replace('#', '')
+      if (hash && ['hero', 'projects', 'about'].includes(hash)) {
+        // Small delay to ensure page is loaded
+        setTimeout(() => {
+          navigateToSection(hash)
+        }, 100)
+      }
+    }
+
+    // Handle initial load
+    handleHashNavigation()
+
+    // Handle hash changes
+    window.addEventListener('hashchange', handleHashNavigation)
+    return () => window.removeEventListener('hashchange', handleHashNavigation)
+  }, [])
 
   useEffect(() => {
     const controlNavbar = () => {
@@ -149,8 +178,8 @@ export default function Navigation() {
             role="navigation"
             aria-label="Main navigation"
           >
-            <button
-              onClick={() => navigateToSection('hero')}
+            <Link
+              href="/#hero"
               className={`text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1 relative ${
                 currentSection === 'hero'
                   ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current'
@@ -158,11 +187,15 @@ export default function Navigation() {
               }`}
               aria-label="Navigate to Home section"
               data-cursor-text="Go to Home"
+              onClick={(e) => {
+                e.preventDefault()
+                navigateToSection('hero')
+              }}
             >
               Home
-            </button>
-            <button
-              onClick={() => navigateToSection('projects')}
+            </Link>
+            <Link
+              href="/#projects"
               className={`text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1 relative ${
                 currentSection === 'projects'
                   ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current'
@@ -170,11 +203,15 @@ export default function Navigation() {
               }`}
               aria-label="Navigate to Work section"
               data-cursor-text="View Work"
+              onClick={(e) => {
+                e.preventDefault()
+                navigateToSection('projects')
+              }}
             >
               Work
-            </button>
-            <button
-              onClick={() => navigateToSection('about')}
+            </Link>
+            <Link
+              href="/#about"
               className={`text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1 relative ${
                 currentSection === 'about'
                   ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current'
@@ -182,9 +219,13 @@ export default function Navigation() {
               }`}
               aria-label="Navigate to About section"
               data-cursor-text="About Me"
+              onClick={(e) => {
+                e.preventDefault()
+                navigateToSection('about')
+              }}
             >
               About
-            </button>
+            </Link>
           </nav>
 
           {/* Desktop Social Links & Contact */}
@@ -260,30 +301,45 @@ export default function Navigation() {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-secondary/20 bg-background animate-in slide-in-from-top-2 duration-300 ease-out">
             <nav className="py-4 space-y-2" role="navigation" aria-label="Mobile navigation">
-              <button
-                onClick={() => navigateToSection('hero')}
-                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${ 
+              <Link
+                href="/#hero"
+                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
                   currentSection === 'hero' ? 'text-text font-medium bg-secondary/20' : ''
                 }`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigateToSection('hero')
+                  setIsMobileMenuOpen(false)
+                }}
               >
                 Home
-              </button>
-              <button
-                onClick={() => navigateToSection('projects')}
-                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${ 
+              </Link>
+              <Link
+                href="/#projects"
+                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
                   currentSection === 'projects' ? 'text-text font-medium bg-secondary/20' : ''
                 }`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigateToSection('projects')
+                  setIsMobileMenuOpen(false)
+                }}
               >
                 Work
-              </button>
-              <button
-                onClick={() => navigateToSection('about')}
-                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${ 
+              </Link>
+              <Link
+                href="/#about"
+                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
                   currentSection === 'about' ? 'text-text font-medium bg-secondary/20' : ''
                 }`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigateToSection('about')
+                  setIsMobileMenuOpen(false)
+                }}
               >
                 About
-              </button>
+              </Link>
               <div className="border-t border-secondary/20 mt-4 pt-4">
                 <a
                   href="https://github.com"

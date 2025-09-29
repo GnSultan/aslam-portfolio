@@ -2,27 +2,21 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-
 import Link from 'next/link'
-import { Project, ProjectFilters } from '@/types/project'
-import { getProjects, getProjectsByCategory } from '@/lib/projects'
+import { Project } from '@/types/project'
+import { getProjects } from '@/lib/projects'
 import Navigation from '@/components/Navigation'
 import ParallaxImage from '@/components/ParallaxImage'
 import GlobalFooterReveal from '@/components/GlobalFooterReveal'
 
-const categories = [
-  { value: 'all', label: 'All Projects' },
-  { value: 'web', label: 'Web Design' },
-  { value: 'mobile', label: 'Mobile Apps' },
-  { value: 'branding', label: 'Branding' },
-  { value: 'ui-ux', label: 'UI/UX' },
-  { value: 'other', label: 'Other' },
-]
+interface ProjectsByYear {
+  [year: number]: Project[]
+}
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
-  const [filteredProjects, setFilteredProjects] = useState<Project[]>([])
-  const [filters, setFilters] = useState<ProjectFilters>({})
+  const [projectsByYear, setProjectsByYear] = useState<ProjectsByYear>({})
+  const [hoveredProject, setHoveredProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -30,7 +24,27 @@ export default function ProjectsPage() {
       try {
         const allProjects = getProjects()
         setProjects(allProjects)
-        setFilteredProjects(allProjects)
+
+        // Group projects by year
+        const grouped = allProjects.reduce((acc: ProjectsByYear, project) => {
+          const year = project.year
+          if (!acc[year]) {
+            acc[year] = []
+          }
+          acc[year].push(project)
+          return acc
+        }, {})
+
+        // Sort projects within each year by order/featured status
+        Object.keys(grouped).forEach(year => {
+          grouped[parseInt(year)].sort((a, b) => {
+            if (a.featured && !b.featured) return -1
+            if (!a.featured && b.featured) return 1
+            return a.order - b.order
+          })
+        })
+
+        setProjectsByYear(grouped)
       } catch (error) {
         console.error('Error loading projects:', error)
       } finally {
@@ -41,37 +55,10 @@ export default function ProjectsPage() {
     loadProjects()
   }, [])
 
-  useEffect(() => {
-    let filtered = projects
-
-    if (filters.category && filters.category !== 'all') {
-      filtered = getProjectsByCategory(filters.category)
-    }
-
-    if (filters.featured !== undefined) {
-      filtered = filtered.filter(project => project.featured === filters.featured)
-    }
-
-    if (filters.status) {
-      filtered = filtered.filter(project => project.status === filters.status)
-    }
-
-    if (filters.year) {
-      filtered = filtered.filter(project => project.year === filters.year)
-    }
-
-    if (filters.tags && filters.tags.length > 0) {
-      filtered = filtered.filter(project =>
-        filters.tags!.some(tag => project.tags.includes(tag))
-      )
-    }
-
-    setFilteredProjects(filtered)
-  }, [projects, filters])
-
-  const handleCategoryChange = (category: string) => {
-    setFilters(prev => ({ ...prev, category }))
-  }
+  // Get years sorted in descending order (newest first)
+  const sortedYears = Object.keys(projectsByYear)
+    .map(year => parseInt(year))
+    .sort((a, b) => b - a)
 
   if (loading) {
     return (
@@ -84,142 +71,192 @@ export default function ProjectsPage() {
   return (
     <div className="min-h-screen">
       <Navigation />
-      
+
       {/* Header */}
       <section className="section-spaced pt-32">
-        <div className="container-70-30">
-          <motion.div
+        <div className="container-wide">
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="content-70-left mb-16"
+            className="h1 mb-6"
+            data-text-hover
           >
-            <h1 className="h1 mb-6 link-hover" data-text-hover>Projects</h1>
-            <p className="text-xl text-text-secondary leading-relaxed">
-              A collection of my recent work spanning web design, mobile apps, branding, and user experience design.
-            </p>
-          </motion.div>
+            Projects
+          </motion.h1>
 
+          {/* Full-width line separator */}
           <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+            className="w-full h-px bg-text mb-16 origin-left"
+          />
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="content-70"
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-xl text-text-secondary leading-relaxed max-w-3xl"
           >
-            {/* Filters */}
-            <div className="flex flex-wrap gap-3 mb-12">
-              {categories.map((category) => (
-                <button
-                  key={category.value}
-                  onClick={() => handleCategoryChange(category.value)}
-                  className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
-                    filters.category === category.value || (!filters.category && category.value === 'all')
-                      ? 'bg-text text-background'
-                      : 'bg-secondary text-text hover:bg-text/10'
-                  }`}
-                >
-                  {category.label}
-                </button>
-              ))}
-            </div>
-
-            {/* 70% width line separator */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
-              className="w-full h-px bg-text mb-16 origin-left"
-            />
-          </motion.div>
+            A chronological journey through my work—from recent projects to past explorations.
+            Each year represents growth, new challenges, and creative solutions.
+          </motion.p>
         </div>
       </section>
 
-      {/* Projects Grid - Full Width */}
-      <section className="section">
-        <div className="w-full px-4 sm:px-6 lg:px-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project, index) => (
-              <motion.div
-                key={project.id}
+      {/* Year Timeline */}
+      {sortedYears.map((year, yearIndex) => (
+        <section key={year} className="relative">
+          {/* Sticky Year Header */}
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-secondary/20">
+            <div className="container-wide py-8">
+              {/* Year Heading */}
+              <motion.h2
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="group"
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="h2 mb-6"
+                data-text-hover
               >
-                <Link href={`/projects/${project.id}`}>
-                  <div className="bg-background border border-secondary rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 group-hover:scale-[1.02]">
-                    {/* Project Image */}
-                    <div className="relative h-64 overflow-hidden parallax-container">
-                      <ParallaxImage
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        speed={-0.5}
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        containerClassName="w-full h-full"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                      {project.featured && (
-                        <div className="absolute top-4 left-4 bg-primary text-background px-3 py-1 rounded-full text-xs font-medium">
-                          Featured
-                        </div>
-                      )}
-                    </div>
+                {year}
+              </motion.h2>
 
-                    {/* Project Info */}
-                    <div className="p-6">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-text-secondary capitalize">
-                          {project.category}
-                        </span>
-                        <span className="text-sm text-text-secondary">
-                          {project.year}
-                        </span>
-                      </div>
-                      
-                      <h3 className="text-xl font-medium mb-2 group-hover:text-primary transition-colors" data-text-hover>
-                        {project.title}
-                      </h3>
-                      
-                      <p className="text-text-secondary text-sm mb-4 line-clamp-2">
-                        {project.description}
-                      </p>
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2">
-                        {project.tags.slice(0, 3).map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-2 py-1 bg-secondary text-text-secondary text-xs rounded"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                        {project.tags.length > 3 && (
-                          <span className="px-2 py-1 bg-secondary text-text-secondary text-xs rounded">
-                            +{project.tags.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+              {/* Full-width line separator */}
+              <motion.div
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+                className="w-full h-px bg-text origin-left"
+              />
+            </div>
           </div>
 
-          {filteredProjects.length === 0 && (
+          {/* Projects Content */}
+          <div className="section-spaced pt-8">
+            <div className="container-wide">
+              {/* Projects for this year - FeaturedWork Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-start">
+              {/* Left Side - Project List */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="space-y-4"
+              >
+                {projectsByYear[year].map((project, projectIndex) => (
+                  <motion.div
+                    key={project.id}
+                    onMouseEnter={() => setHoveredProject(project)}
+                    onMouseLeave={() => setHoveredProject(null)}
+                    data-project-hover
+                    className="w-full"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: projectIndex * 0.1 }}
+                  >
+                    <Link
+                      href={`/projects/${project.id}`}
+                      className="block w-full text-left p-4 rounded-lg transition-all duration-300 relative text-text/70 hover:text-text"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="text-xl font-medium" data-text-hover>{project.title}</h3>
+                        <div className="flex items-center gap-2">
+                          {project.featured && (
+                            <span className="text-xs text-background bg-primary px-2 py-1 rounded">
+                              Featured
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <p className="text-sm text-text-secondary mb-1" data-text-hover>{project.description}</p>
+                      <div className="flex items-center gap-2 text-xs text-text-secondary">
+                        <span className="capitalize bg-secondary px-2 py-1 rounded">
+                          {project.category}
+                        </span>
+                        {project.client && (
+                          <span>• {project.client}</span>
+                        )}
+                        {project.role && (
+                          <span>• {project.role}</span>
+                        )}
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Right Side - Project Display (Only on Hover) */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="relative h-[600px] lg:h-[700px] overflow-hidden"
+              >
+                {hoveredProject ? (
+                  <motion.div
+                    key={hoveredProject.id}
+                    initial={{
+                      opacity: 0,
+                      x: 50,
+                      rotate: -5
+                    }}
+                    animate={{
+                      opacity: 1,
+                      x: 0,
+                      rotate: -5
+                    }}
+                    exit={{
+                      opacity: 0,
+                      x: 50,
+                      rotate: -5
+                    }}
+                    transition={{
+                      duration: 0.6,
+                      ease: [0.25, 0.1, 0.25, 1]
+                    }}
+                    className="relative w-[480px] lg:w-[520px] h-[600px] mx-auto"
+                  >
+                    <Link href={`/projects/${hoveredProject.id}`}>
+                      <ParallaxImage
+                        src={hoveredProject.image}
+                        alt={`${hoveredProject.title} project mockup`}
+                        fill
+                        speed={-0.8}
+                        className="object-cover hover:scale-105 transition-transform duration-300"
+                        containerClassName="relative w-full h-full"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        quality={90}
+                      />
+                    </Link>
+                  </motion.div>
+                ) : null}
+              </motion.div>
+            </div>
+            </div>
+          </div>
+        </section>
+      ))}
+
+      {/* Empty State */}
+      {sortedYears.length === 0 && (
+        <section className="section-spaced">
+          <div className="container-wide">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-center py-16"
             >
-              <p className="text-text-secondary">No projects found matching your filters.</p>
+              <p className="text-text-secondary">No projects found. Start by adding some projects!</p>
             </motion.div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* Footer Reveal Effect */}
       <GlobalFooterReveal>
@@ -229,8 +266,8 @@ export default function ProjectsPage() {
             <p className="text-xl text-text-secondary leading-relaxed max-w-2xl mx-auto mb-8">
               Let's discuss your next project and bring your ideas to life.
             </p>
-            <a 
-              href="mailto:hello@aslam.com" 
+            <a
+              href="mailto:hello@aslam.com"
               className="inline-block px-8 py-4 bg-text text-background rounded-lg hover:bg-text/90 transition-colors"
             >
               Get in Touch
