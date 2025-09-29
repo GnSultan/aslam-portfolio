@@ -103,15 +103,26 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
     setLoading(true)
 
     try {
+      let result
       if (mode === 'create') {
-        await createProject(formData)
+        console.log('Creating project with data:', formData)
+        result = createProject(formData)
+        console.log('Project created:', result)
       } else if (projectId) {
-        await updateProject(projectId, formData)
+        console.log('Updating project:', projectId, 'with data:', formData)
+        result = updateProject(projectId, formData)
+        console.log('Project updated:', result)
       }
-      router.push('/admin')
+
+      if (result) {
+        console.log('Project saved successfully, redirecting to admin...')
+        router.push('/admin')
+      } else {
+        throw new Error('Failed to save project - no result returned')
+      }
     } catch (error) {
       console.error('Error saving project:', error)
-      alert('Failed to save project')
+      alert(`Failed to save project: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setLoading(false)
     }

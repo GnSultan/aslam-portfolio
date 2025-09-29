@@ -137,6 +137,13 @@ export default function AdminPage() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <Link
+                            href={`/projects/${project.id}`}
+                            className="px-3 py-1 text-xs bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors"
+                            data-cursor-text="View"
+                          >
+                            View
+                          </Link>
+                          <Link
                             href={`/admin/projects/${project.id}/edit`}
                             className="px-3 py-1 text-xs bg-secondary text-text-secondary rounded hover:bg-text/10 transition-colors"
                           >

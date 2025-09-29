@@ -66,6 +66,16 @@ export default function HorizontalScrollCarousel({ projects, currentProjectId }:
 
   const relatedProjects = projects
     .filter(p => p.id !== currentProjectId)
+    .sort((a, b) => {
+      // Sort by year (most recent first), then by updatedAt/createdAt
+      if (a.year !== b.year) {
+        return b.year - a.year
+      }
+      // If same year, sort by updatedAt (most recently updated first)
+      const aDate = new Date(a.updatedAt || a.createdAt).getTime()
+      const bDate = new Date(b.updatedAt || b.createdAt).getTime()
+      return bDate - aDate
+    })
     .slice(0, 3)
 
   const cardWidth = width < 768 ? width * 0.8 : width * 0.5

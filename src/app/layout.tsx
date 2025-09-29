@@ -36,22 +36,30 @@ export default function RootLayout({
     // Cache DOM queries for better performance
     const isPortfolioElement = (element: HTMLElement): boolean => {
       const href = element.getAttribute('href');
-      if (href?.includes('/projects/')) return true;
 
+      // ONLY actual project viewing links should return true
+      // Pattern: /projects/{id} (not /admin/projects or other variations)
+      if (href?.match(/^\/projects\/[^\/]+\/?$/)) {
+        return true;
+      }
+
+      // Skip ALL admin pages entirely
+      if (href?.includes('/admin/')) {
+        return false;
+      }
+
+      // Check for elements with specific portfolio data attributes
+      // Only "View" alone (not "View Work" or other variations)
+      if (element.hasAttribute('data-cursor-text') &&
+          element.getAttribute('data-cursor-text')?.toLowerCase() === 'view') {
+        return true;
+      }
+
+      // Be very conservative with class-based detection
+      // Only check for very specific portfolio-related classes
       const className = element.className || '';
-      const hasPortfolioClass = PORTFOLIO_KEYWORDS.some(keyword => className.includes(keyword));
-
-      if (hasPortfolioClass) return true;
-
-      // Simplified parent check - only go up 3 levels max
-      let parent = element.parentElement;
-      let level = 0;
-      while (parent && level < 3) {
-        const parentClass = parent.className || '';
-        if (PORTFOLIO_KEYWORDS.some(keyword => parentClass.includes(keyword))) return true;
-        if (parent.id && PORTFOLIO_KEYWORDS.some(keyword => parent.id.includes(keyword))) return true;
-        parent = parent.parentElement;
-        level++;
+      if (className.includes('project-card') || className.includes('portfolio-item')) {
+        return true;
       }
 
       return false;
@@ -85,13 +93,14 @@ export default function RootLayout({
           currentInteractiveElement = interactiveElement;
           memoizedSetIsHovering(true);
 
-          // Use optimized portfolio detection
+          // Only show "View" text and special behavior for actual project links
           if (isPortfolioElement(interactiveElement)) {
             memoizedSetCursorVariant('hover');
             memoizedSetCursorText('View');
           } else {
+            // All other interactive elements get subtle hover effect only
             memoizedSetCursorVariant('hover');
-            memoizedSetCursorText('');
+            memoizedSetCursorText(''); // No text, just subtle size increase
           }
         }
         // If hovering over form fields, keep cursor in default state

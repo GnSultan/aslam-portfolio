@@ -7,18 +7,38 @@ const STORAGE_KEY = 'portfolio_projects';
 
 export const getProjects = (): Project[] => {
   if (typeof window === 'undefined') return [];
-  
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Ensure we have valid project array
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
     }
   } catch (error) {
-    console.error('Error loading projects:', error);
+    console.error('Error loading projects from localStorage:', error);
+    // Try to backup corrupted data before clearing
+    const corrupted = localStorage.getItem(STORAGE_KEY);
+    if (corrupted) {
+      localStorage.setItem(`${STORAGE_KEY}_corrupted_${Date.now()}`, corrupted);
+    }
   }
-  
-  // Return default projects if none exist
-  return getDefaultProjects();
+
+  // Only initialize with default projects if no valid data exists
+  // Check if this is the first time initialization
+  const hasBeenInitialized = localStorage.getItem(`${STORAGE_KEY}_initialized`);
+  if (!hasBeenInitialized) {
+    const defaultProjects = getDefaultProjects();
+    saveProjects(defaultProjects);
+    localStorage.setItem(`${STORAGE_KEY}_initialized`, 'true');
+    return defaultProjects;
+  }
+
+  // If we've been initialized before but have no data, return empty array
+  // This prevents losing custom projects when localStorage is temporarily unavailable
+  return [];
 };
 
 export const getProject = (id: string): Project | null => {
@@ -80,13 +100,77 @@ export const getProjectsByCategory = (category: string): Project[] => {
   return projects.filter(project => project.category === category);
 };
 
+// Debug functions for troubleshooting
+export const resetToDefaults = (): Project[] => {
+  if (typeof window === 'undefined') return [];
+
+  console.warn('Resetting projects to default values - all custom projects will be lost!');
+
+  // Clear all related localStorage keys
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(`${STORAGE_KEY}_initialized`);
+  localStorage.removeItem(`${STORAGE_KEY}_backup`);
+
+  // Get fresh default projects
+  const defaults = getDefaultProjects();
+  saveProjects(defaults);
+  localStorage.setItem(`${STORAGE_KEY}_initialized`, 'true');
+
+  return defaults;
+};
+
+export const getStorageInfo = () => {
+  if (typeof window === 'undefined') return null;
+
+  return {
+    hasProjects: !!localStorage.getItem(STORAGE_KEY),
+    hasBackup: !!localStorage.getItem(`${STORAGE_KEY}_backup`),
+    hasInitFlag: !!localStorage.getItem(`${STORAGE_KEY}_initialized`),
+    projectsData: localStorage.getItem(STORAGE_KEY),
+    backupData: localStorage.getItem(`${STORAGE_KEY}_backup`),
+  };
+};
+
 const saveProjects = (projects: Project[]): void => {
   if (typeof window === 'undefined') return;
-  
+
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+    // Validate input
+    if (!Array.isArray(projects)) {
+      throw new Error('Projects must be an array');
+    }
+
+    // Create backup of current data before overwriting
+    const current = localStorage.getItem(STORAGE_KEY);
+    if (current) {
+      localStorage.setItem(`${STORAGE_KEY}_backup`, current);
+    }
+
+    const serialized = JSON.stringify(projects);
+    localStorage.setItem(STORAGE_KEY, serialized);
+
+    // Verify the save worked by immediately reading it back
+    const verification = localStorage.getItem(STORAGE_KEY);
+    if (verification !== serialized) {
+      throw new Error('Save verification failed');
+    }
+
+    console.log(`Successfully saved ${projects.length} projects to localStorage`);
   } catch (error) {
     console.error('Error saving projects:', error);
+
+    // Try to restore from backup if save failed
+    const backup = localStorage.getItem(`${STORAGE_KEY}_backup`);
+    if (backup) {
+      try {
+        localStorage.setItem(STORAGE_KEY, backup);
+        console.log('Restored from backup after failed save');
+      } catch (restoreError) {
+        console.error('Failed to restore backup:', restoreError);
+      }
+    }
+
+    throw error; // Re-throw so caller knows save failed
   }
 };
 
