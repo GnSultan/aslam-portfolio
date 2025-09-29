@@ -38,7 +38,7 @@ export default function PurposeStatement() {
   useEffect(() => {
     if (isInView) {
       setIsTyping(true)
-      let fullText = textLines.join(' ').replace(/<br \/>/g, '<br /> ')
+      const fullText = textLines.join(' ').replace(/<br \/>/g, '<br /> ')
       let currentText = ''
       let i = 0
 

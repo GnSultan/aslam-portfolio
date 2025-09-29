@@ -12,6 +12,11 @@ import HorizontalScrollCarousel from '@/components/HorizontalScrollCarousel'
 import PortfolioLoader from '@/components/ui/PortfolioLoader'
 import ProjectNotFound from '@/components/ui/ProjectNotFound'
 import ErrorBoundary from '@/components/ui/ErrorBoundary'
+import ProjectOverview from '@/components/project/ProjectOverview'
+import ProjectFeatures from '@/components/project/ProjectFeatures'
+import ProjectMetrics from '@/components/project/ProjectMetrics'
+import ProjectApproach from '@/components/project/ProjectApproach'
+import ProjectLearnings from '@/components/project/ProjectLearnings'
 
 
 
@@ -284,33 +289,131 @@ export default function ProjectPage() {
         </section>
       )}
 
-      {/* Technologies */}
+      {/* Modern Tech Stack */}
       <section className="section-spaced bg-secondary/30">
-        <div className="container-30-70">
+        <div className="container-wide">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="content-70"
           >
-            <h3 className="h3 mb-6" data-text-hover>Technologies Used</h3>
-            <div className="flex flex-wrap gap-3">
-              {project.technologies.map((tech) => (
-                <span
+            {/* Section header */}
+            <div className="text-center mb-16">
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <div className="w-12 h-px bg-primary" />
+                <h2 className="h3 text-primary">Tech Stack</h2>
+                <div className="w-12 h-px bg-primary" />
+              </div>
+            </div>
+
+            {/* Interactive tech grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+              {project.technologies.map((tech, index) => (
+                <motion.div
                   key={tech}
-                  className="px-4 py-2 bg-background border border-secondary text-text-secondary text-sm rounded-lg"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  whileHover={{
+                    scale: 1.05,
+                    rotate: [0, -1, 1, 0],
+                    transition: { duration: 0.3 }
+                  }}
+                  className="group"
                 >
-                  {tech}
-                </span>
+                  <div className="relative p-4 bg-background rounded-lg border border-secondary/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 text-center">
+                    {/* Tech name */}
+                    <span className="text-sm font-medium text-text group-hover:text-primary transition-colors duration-300">
+                      {tech}
+                    </span>
+
+                    {/* Hover glow effect */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                      className="absolute inset-0 bg-primary/5 rounded-lg -z-10"
+                    />
+
+                    {/* Animated border */}
+                    <motion.div
+                      initial={{ pathLength: 0 }}
+                      whileHover={{ pathLength: 1 }}
+                      transition={{ duration: 0.6 }}
+                      className="absolute inset-0"
+                    >
+                      <svg className="absolute inset-0 w-full h-full">
+                        <rect
+                          x="1"
+                          y="1"
+                          width="calc(100% - 2px)"
+                          height="calc(100% - 2px)"
+                          rx="8"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1"
+                          className="text-primary/50"
+                          pathLength="1"
+                        />
+                      </svg>
+                    </motion.div>
+                  </div>
+                </motion.div>
               ))}
             </div>
+
+            {/* Tech stack footer */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="mt-12 text-center"
+            >
+              <p className="text-text-secondary text-sm">
+                Hover over each technology to explore the stack
+              </p>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* Case Study */}
-      {project.caseStudy && (
+      {/* Modern Content Sections */}
+
+      {/* Project Overview */}
+      {project.overview && (
+        <ProjectOverview overview={project.overview} />
+      )}
+
+      {/* Key Features */}
+      {project.keyFeatures && project.keyFeatures.length > 0 && (
+        <ProjectFeatures features={project.keyFeatures} />
+      )}
+
+      {/* Impact & Metrics */}
+      {project.impact && (project.impact.metrics || project.impact.achievements) && (
+        <ProjectMetrics
+          metrics={project.impact.metrics || []}
+          achievements={project.impact.achievements}
+        />
+      )}
+
+      {/* Approach & Strategy */}
+      {project.approach && (
+        <ProjectApproach
+          methodology={project.approach.methodology}
+          keyDecisions={project.approach.keyDecisions}
+        />
+      )}
+
+      {/* Key Learnings */}
+      {project.learnings && project.learnings.length > 0 && (
+        <ProjectLearnings learnings={project.learnings} />
+      )}
+
+      {/* Legacy Case Study (fallback) */}
+      {!project.overview && !project.keyFeatures && !project.impact && !project.approach && !project.learnings && project.caseStudy && (
         <section className="section-spaced">
           <div className="container-30-70">
             <motion.div
@@ -359,57 +462,6 @@ export default function ProjectPage() {
                     />
                     <p className="text-lg text-text-secondary leading-relaxed">
                       {project.caseStudy.solution}
-                    </p>
-                  </motion.div>
-                )}
-
-                {project.caseStudy.process && project.caseStudy.process.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                  >
-                    <h3 className="h3 mb-6" data-text-hover>The Process</h3>
-                    <motion.div
-                      initial={{ scaleX: 0 }}
-                      whileInView={{ scaleX: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.8, ease: 'easeOut', delay: 0.5 }}
-                      className="w-full h-px bg-text mb-6 origin-left"
-                    />
-                    <div className="space-y-4">
-                      {project.caseStudy.process.map((step, index) => (
-                        <div key={index} className="flex items-start gap-4">
-                          <div className="flex-shrink-0 w-8 h-8 bg-primary text-background rounded-full flex items-center justify-center text-sm font-medium">
-                            {index + 1}
-                          </div>
-                          <p className="text-lg text-text-secondary leading-relaxed pt-1">
-                            {step}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-
-                {project.caseStudy.results && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                  >
-                    <h3 className="h3 mb-6" data-text-hover>Results & Impact</h3>
-                    <motion.div
-                      initial={{ scaleX: 0 }}
-                      whileInView={{ scaleX: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.8, ease: 'easeOut', delay: 0.6 }}
-                      className="w-full h-px bg-text mb-6 origin-left"
-                    />
-                    <p className="text-lg text-text-secondary leading-relaxed">
-                      {project.caseStudy.results}
                     </p>
                   </motion.div>
                 )}

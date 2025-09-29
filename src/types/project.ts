@@ -22,6 +22,28 @@ export interface Project {
   githubUrl?: string;
   behanceUrl?: string;
   websiteEmbed?: string;
+
+  // Modern content structure
+  overview?: string;
+  keyFeatures?: string[];
+  impact?: {
+    metrics?: Array<{
+      label: string;
+      value: string;
+      description?: string;
+    }>;
+    achievements?: string[];
+  };
+  approach?: {
+    methodology?: string;
+    keyDecisions?: Array<{
+      decision: string;
+      rationale: string;
+    }>;
+  };
+  learnings?: string[];
+
+  // Legacy case study (for backward compatibility)
   caseStudy?: {
     challenge: string;
     solution: string;
