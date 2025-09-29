@@ -13,7 +13,7 @@ import GlobalFooterReveal from '@/components/GlobalFooterReveal'
 
 export default function Home() {
   return (
-    <main>
+    <main id="main-content">
       <Navigation />
       <Hero />
       <PurposeStatement />

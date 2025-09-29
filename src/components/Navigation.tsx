@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { siteConfig } from '@/config/site'
 
 export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -168,7 +169,7 @@ export default function Navigation() {
             data-cursor-text="Home"
             data-magnetic
           >
-            Aslam
+            {siteConfig.name}
           </Link>
           
           {/* Desktop Navigation */}
@@ -241,31 +242,31 @@ export default function Navigation() {
             aria-label="Social links and contact"
           >
             <a
-              href="https://github.com"
+              href={siteConfig.social.github}
               target="_blank"
               rel="noopener noreferrer"
               className="text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1"
-              aria-label="Visit Aslam's GitHub profile (opens in new tab)"
+              aria-label="Visit GitHub profile (opens in new tab)"
               data-cursor-text="GitHub"
               data-magnetic
             >
               Github
             </a>
             <a
-              href="https://linkedin.com"
+              href={siteConfig.social.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               className="text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1"
-              aria-label="Visit Aslam's LinkedIn profile (opens in new tab)"
+              aria-label="Visit LinkedIn profile (opens in new tab)"
               data-cursor-text="LinkedIn"
               data-magnetic
             >
               LinkedIn
             </a>
             <a
-              href="mailto:hello@aslam.com"
+              href={`mailto:${siteConfig.email}`}
               className="text-text/70 hover:text-primary transition-colors duration-300 link-hover focus:outline-none rounded px-2 py-1"
-              aria-label="Send email to Aslam"
+              aria-label="Send email"
               data-cursor-text="Say Hello"
               data-magnetic
             >
@@ -350,7 +351,7 @@ export default function Navigation() {
               </Link>
               <div className="border-t border-secondary/20 mt-4 pt-4">
                 <a
-                  href="https://github.com"
+                  href={siteConfig.social.github}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg"
@@ -358,7 +359,7 @@ export default function Navigation() {
                   Github
                 </a>
                 <a
-                  href="https://linkedin.com"
+                  href={siteConfig.social.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg"
@@ -366,9 +367,9 @@ export default function Navigation() {
                   LinkedIn
                 </a>
                 <a
-                  href="mailto:hello@aslam.com"
+                  href={`mailto:${siteConfig.email}`}
                   className="block px-4 py-2 text-text/70 hover:text-primary hover:bg-secondary/50 transition-colors duration-300 rounded-lg"
-                  aria-label="Send email to Aslam"
+                  aria-label="Send email"
                 >
                   Contact
                 </a>

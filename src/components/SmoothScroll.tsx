@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
-import Lenis from '@studio-freight/lenis'
+import Lenis from 'lenis'
 
 const SmoothScroll = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname()

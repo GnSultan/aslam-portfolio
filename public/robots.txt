@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://aslam-portfolio.vercel.app/sitemap.xml
+# Sitemap
+Sitemap: https://aslam.com/sitemap.xml
+
+# Allow crawling of images
+User-agent: Googlebot-Image
+Allow: /
+
+# Block admin routes
+User-agent: *
+Disallow: /admin/

@@ -140,40 +140,21 @@ export default function Gallery() {
     parallaxTarget.set(0)
   }, [parallaxTarget])
 
-  // Handle image click for fullscreen or navigation
+  // Handle image click for fullscreen only
   const handleImageClick = useCallback((image: GalleryImage, index: number) => {
     const dragThreshold = 5
     if (isDragging) return
     if (dragDistance < dragThreshold) {
-      if (image.projectId) {
-        // Store transition data for shared element animation
-        sessionStorage.setItem('gallery-transition', JSON.stringify({
-          imageId: `${image.projectId}-${image.imageIndex}`,
-          imageSrc: image.src,
-          imageAlt: image.alt,
-          projectTitle: image.projectTitle,
-          projectId: image.projectId,
-          imageIndex: image.imageIndex,
-          fromGallery: true
-        }))
-
-        // Navigate to project page with router to preserve shared element timing
-        router.push(`/projects/${image.projectId}`)
-        // Reset interaction state for when user navigates back
-        setDragDistance(0)
-        setIsDragging(false)
-      } else {
-        // Fallback to fullscreen
-        setFullscreenImage(image)
-        setCurrentIndex(index)
-      }
+      // Show fullscreen view
+      setFullscreenImage(image)
+      setCurrentIndex(index)
     }
-  }, [dragDistance, isDragging, router])
+  }, [dragDistance, isDragging])
 
   // Cursor interactions
   const handleMouseEnter = useCallback(() => {
     setIsHovering(true)
-    setCursorText('View Project')
+    setCursorText('View')
     setCursorVariant('hover')
   }, [setIsHovering, setCursorText, setCursorVariant])
 
@@ -301,7 +282,6 @@ export default function Gallery() {
                 <div className="relative w-full h-full overflow-hidden rounded-lg">
                   <motion.div
                     className="w-full h-full"
-                    layoutId={`gallery-image-${image.projectId}-${image.imageIndex}`}
                     style={{
                       x: parallaxOffset,
                       scale: 1.04, // smaller to reduce perceived wobble

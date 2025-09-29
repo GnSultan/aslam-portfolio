@@ -16,6 +16,9 @@ interface ParallaxImageProps {
   sizes?: string
   priority?: boolean
   quality?: number
+  loading?: 'lazy' | 'eager'
+  placeholder?: 'blur' | 'empty'
+  blurDataURL?: string
 }
 
 export default function ParallaxImage({
@@ -30,6 +33,9 @@ export default function ParallaxImage({
   sizes,
   priority = false,
   quality = 90,
+  loading = 'lazy',
+  placeholder = 'empty',
+  blurDataURL,
 }: ParallaxImageProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isInView, setIsInView] = useState(false)
@@ -93,6 +99,9 @@ export default function ParallaxImage({
             sizes={sizes}
             priority={priority}
             quality={quality}
+            loading={priority ? 'eager' : loading}
+            placeholder={placeholder}
+            blurDataURL={blurDataURL}
           />
         ) : (
           <Image
@@ -104,6 +113,9 @@ export default function ParallaxImage({
             sizes={sizes}
             priority={priority}
             quality={quality}
+            loading={priority ? 'eager' : loading}
+            placeholder={placeholder}
+            blurDataURL={blurDataURL}
           />
         )}
       </motion.div>

@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { Project } from '@/types/project'
 import { getProject, getProjects } from '@/lib/projects'
 import Navigation from '@/components/Navigation'
 import ParallaxImage from '@/components/ParallaxImage'
-import Image from 'next/image'
-import Footer from '@/components/Footer'
 import GlobalFooterReveal from '@/components/GlobalFooterReveal'
 import HorizontalScrollCarousel from '@/components/HorizontalScrollCarousel'
+import PortfolioLoader from '@/components/ui/PortfolioLoader'
+import ProjectNotFound from '@/components/ui/ProjectNotFound'
+import ErrorBoundary from '@/components/ui/ErrorBoundary'
 
 
 
@@ -21,9 +21,6 @@ export default function ProjectPage() {
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
   const [allProjects, setAllProjects] = useState<Project[]>([])
-  const [transitionData, setTransitionData] = useState<any>(null)
-  const [showTransition, setShowTransition] = useState(false)
-  const [overlayDone, setOverlayDone] = useState(false)
 
   useEffect(() => {
     const loadData = () => {
@@ -32,18 +29,6 @@ export default function ProjectPage() {
         const allProjectsData = getProjects()
         setProject(projectData)
         setAllProjects(allProjectsData)
-
-        // Check for gallery transition data
-        const storedTransitionData = sessionStorage.getItem('gallery-transition')
-        if (storedTransitionData) {
-          const transitionInfo = JSON.parse(storedTransitionData)
-          if (transitionInfo.fromGallery) {
-            setTransitionData(transitionInfo)
-            setShowTransition(true)
-            // Clear the transition data
-            sessionStorage.removeItem('gallery-transition')
-          }
-        }
       } catch (error) {
         console.error('Error loading data:', error)
       } finally {
@@ -70,67 +55,21 @@ export default function ProjectPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-text/70">Loading project...</div>
-      </div>
+      <PortfolioLoader
+        text="Loading Project"
+        subtitle="Preparing an amazing experience"
+        fullscreen={true}
+      />
     )
   }
 
   if (!project) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="h2 mb-4">Project Not Found</h1>
-          <p className="text-text-secondary mb-8">The project you&apos;re looking for doesn&apos;t exist.</p>
-          <Link href="/projects" className="link-hover">
-            ← Back to Projects
-          </Link>
-        </div>
-      </div>
-    )
+    return <ProjectNotFound />
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Gallery Transition Overlay */}
-      {showTransition && transitionData && (
-        <motion.div
-          className="fixed inset-0 z-50 pointer-events-none"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: overlayDone ? 0 : 1 }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <motion.div
-            className="absolute"
-            layoutId={`gallery-image-${transitionData.projectId}-${transitionData.imageIndex}`}
-            style={{
-              width: '100vw',
-              height: '100vh',
-              background: `url(${transitionData.imageSrc}) center/cover`,
-            }}
-            onLayoutAnimationComplete={() => {
-              setOverlayDone(true)
-              // small delay to allow fade-out
-              setTimeout(() => setShowTransition(false), 150)
-            }}
-          />
-          <motion.div
-            className="absolute inset-0 bg-black/50 flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: overlayDone ? 0 : 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <motion.h1
-              className="text-white text-4xl md:text-6xl font-bold text-center"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: overlayDone ? 0 : 1, y: overlayDone ? 10 : 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              {transitionData.projectTitle}
-            </motion.h1>
-          </motion.div>
-        </motion.div>
-      )}
+    <ErrorBoundary>
+      <div className="min-h-screen" id="main-content">
 
       <Navigation />
       
@@ -205,16 +144,16 @@ export default function ProjectPage() {
             transition={{ duration: 0.6 }}
             className="relative w-full aspect-[2/1] rounded-lg overflow-hidden parallax-container"
           >
-            <motion.div layoutId={transitionData?.imageId ? `gallery-image-${transitionData.imageId}` : undefined} className="absolute inset-0">
-              <Image
-                src={validImages[selectedImage]}
-                alt={`${project.title} - Main showcase`}
-                fill
-                className="object-cover"
-                sizes="100vw"
-                priority
-              />
-            </motion.div>
+            <ParallaxImage
+              src={validImages[selectedImage]}
+              alt={`${project.title} - Main showcase`}
+              fill
+              speed={-1.2}
+              className="object-cover"
+              containerClassName="w-full h-full"
+              sizes="100vw"
+              priority
+            />
           </motion.div>
         </div>
       </section>
@@ -556,6 +495,7 @@ export default function ProjectPage() {
           </div>
         </section>
       </GlobalFooterReveal>
-    </div>
+      </div>
+    </ErrorBoundary>
   )
 }
