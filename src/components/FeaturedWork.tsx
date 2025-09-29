@@ -13,6 +13,8 @@ export default function FeaturedWork() {
   const [hoveredProject, setHoveredProject] = useState<Project | null>(null)
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null)
   const currentHoveredProject = useRef<Project | null>(null)
+  const mousePositionRef = useRef({ x: 0, y: 0, lastMoveTime: 0 })
+  const mouseMoveCountRef = useRef(0)
 
   useEffect(() => {
     const loadProjects = () => {
@@ -30,10 +32,47 @@ export default function FeaturedWork() {
     loadProjects()
   }, [])
 
-  // Intentional hover handlers with delay
-  const handleProjectHover = useCallback((project: Project) => {
+  // Track mouse movement to detect intentional hovering
+  const handleMouseMove = useCallback((event: React.MouseEvent) => {
+    const now = Date.now()
+    const currentPos = { x: event.clientX, y: event.clientY }
+    const lastPos = mousePositionRef.current
+
+    // Calculate movement distance
+    const distance = Math.sqrt(
+      Math.pow(currentPos.x - lastPos.x, 2) + Math.pow(currentPos.y - lastPos.y, 2)
+    )
+
+    // Update position tracking
+    mousePositionRef.current = { ...currentPos, lastMoveTime: now }
+
+    // If mouse moved significantly recently, it's likely unintentional
+    if (distance > 3 && (now - lastPos.lastMoveTime) < 100) {
+      mouseMoveCountRef.current++
+
+      // Reset timer if too much movement
+      if (mouseMoveCountRef.current > 2) {
+        if (hoverTimerRef.current) {
+          clearTimeout(hoverTimerRef.current)
+          hoverTimerRef.current = null
+        }
+        return
+      }
+    }
+  }, [])
+
+  // Intentional hover handlers with stricter detection
+  const handleProjectHover = useCallback((project: Project, event: React.MouseEvent) => {
     // Set immediate hover state for visual feedback
     setHoveredProject(project)
+
+    // Initialize mouse tracking
+    mousePositionRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      lastMoveTime: Date.now()
+    }
+    mouseMoveCountRef.current = 0
 
     // Clear any existing timer
     if (hoverTimerRef.current) {
@@ -42,13 +81,13 @@ export default function FeaturedWork() {
 
     currentHoveredProject.current = project
 
-    // Only change active project after a deliberate hover delay
+    // Longer delay and require mouse to be relatively stationary
     hoverTimerRef.current = setTimeout(() => {
-      // Only update if user is still hovering the same project
-      if (currentHoveredProject.current === project) {
+      // Only update if user is still hovering the same project and mouse is relatively still
+      if (currentHoveredProject.current === project && mouseMoveCountRef.current <= 2) {
         setActiveProject(project)
       }
-    }, 200) // 200ms delay to ensure intentional hover
+    }, 500) // 500ms delay for more intentional hovering
   }, [])
 
   const handleProjectLeave = useCallback(() => {
@@ -61,6 +100,7 @@ export default function FeaturedWork() {
       hoverTimerRef.current = null
     }
     currentHoveredProject.current = null
+    mouseMoveCountRef.current = 0
   }, [])
 
   // Cleanup on unmount
@@ -119,8 +159,6 @@ export default function FeaturedWork() {
             {projects.map((project, index) => (
               <motion.div
                 key={project.id}
-                onMouseEnter={() => handleProjectHover(project)}
-                onMouseLeave={handleProjectLeave}
                 data-project-hover
                 className="w-full"
                 initial={{ opacity: 0, y: 20 }}
@@ -130,6 +168,9 @@ export default function FeaturedWork() {
               >
                 <Link
                   href={`/projects/${project.id}`}
+                  onMouseEnter={(e) => handleProjectHover(project, e)}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleProjectLeave}
                   className={`block w-full text-left p-4 rounded-lg transition-all duration-300 relative group ${
                     activeProject?.id === project.id
                       ? 'text-text bg-secondary/10'
@@ -170,13 +211,23 @@ export default function FeaturedWork() {
                         : 'w-0'
                   }`} />
 
-                  {/* Hover intent indicator */}
+                  {/* Hover intent indicator - shows "charging" */}
                   {hoveredProject?.id === project.id && activeProject?.id !== project.id && (
                     <motion.div
                       initial={{ scaleX: 0 }}
                       animate={{ scaleX: 1 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute bottom-0 left-0 w-full h-[1px] bg-primary/30 origin-left"
+                      transition={{ duration: 0.5, ease: "easeOut" }}
+                      className="absolute bottom-0 left-0 w-full h-[1px] bg-primary/50 origin-left"
+                    />
+                  )}
+
+                  {/* Hover progress indicator */}
+                  {hoveredProject?.id === project.id && activeProject?.id !== project.id && (
+                    <motion.div
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 0.5, ease: "linear" }}
+                      className="absolute bottom-0 left-0 h-[2px] bg-primary origin-left"
                     />
                   )}
                 </Link>
