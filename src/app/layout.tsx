@@ -26,101 +26,105 @@ export default function RootLayout({
   useEffect(() => {
     let currentInteractiveElement: HTMLElement | null = null;
     let debounceTimer: NodeJS.Timeout | null = null;
+    let rafId: number = 0;
+
+    // Optimized selectors for better Chrome performance
+    const INTERACTIVE_SELECTORS = 'a, button, [data-cursor-hover], [role="button"], [role="link"]';
+    const FORM_SELECTORS = 'input, textarea, select';
+    const PORTFOLIO_KEYWORDS = ['project', 'gallery', 'work', 'portfolio'];
+
+    // Cache DOM queries for better performance
+    const isPortfolioElement = (element: HTMLElement): boolean => {
+      const href = element.getAttribute('href');
+      if (href?.includes('/projects/')) return true;
+
+      const className = element.className || '';
+      const hasPortfolioClass = PORTFOLIO_KEYWORDS.some(keyword => className.includes(keyword));
+
+      if (hasPortfolioClass) return true;
+
+      // Simplified parent check - only go up 3 levels max
+      let parent = element.parentElement;
+      let level = 0;
+      while (parent && level < 3) {
+        const parentClass = parent.className || '';
+        if (PORTFOLIO_KEYWORDS.some(keyword => parentClass.includes(keyword))) return true;
+        if (parent.id && PORTFOLIO_KEYWORDS.some(keyword => parent.id.includes(keyword))) return true;
+        parent = parent.parentElement;
+        level++;
+      }
+
+      return false;
+    };
 
     const handleMouseMove = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-
-      // Clear any pending debounced updates
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
-        debounceTimer = null;
+      // Throttle with RAF for better Chrome performance
+      if (rafId) {
+        cancelAnimationFrame(rafId);
       }
 
-      // Find the closest interactive element
-        const interactiveElement = target.closest('a, button, [data-cursor-hover], [role="button"], [role="link"]') as HTMLElement ||
+      rafId = requestAnimationFrame(() => {
+        const target = event.target as HTMLElement;
+
+        // Clear any pending debounced updates
+        if (debounceTimer) {
+          clearTimeout(debounceTimer);
+          debounceTimer = null;
+        }
+
+        // Single DOM query with optimized selector
+        const interactiveElement = target.closest(INTERACTIVE_SELECTORS) as HTMLElement ||
                                   (target.hasAttribute('onclick') ? target : null) ||
                                   (target.classList.contains('cursor-pointer') ? target : null);
-        
-        // Check for form fields separately (they don't make cursor grow)
-        const formField = target.closest('input, textarea, select') as HTMLElement;
 
-      // If we found a new interactive element (but not form fields)
-      if (interactiveElement && interactiveElement !== currentInteractiveElement && !formField) {
-        currentInteractiveElement = interactiveElement;
-        memoizedSetIsHovering(true);
+        // Check for form fields
+        const formField = target.closest(FORM_SELECTORS) as HTMLElement;
 
-        const href = interactiveElement.getAttribute('href') || '';
-        const className = interactiveElement.className || '';
-        const parentClasses = interactiveElement.closest('[class*="gallery"], [class*="project"], [class*="work"], [class*="portfolio"]')?.className || '';
+        // If we found a new interactive element (but not form fields)
+        if (interactiveElement && interactiveElement !== currentInteractiveElement && !formField) {
+          currentInteractiveElement = interactiveElement;
+          memoizedSetIsHovering(true);
 
-        // Check if this is a portfolio/project/gallery related element
-        const isPortfolioElement = href.includes('/projects/') ||
-                                 className.includes('project') ||
-                                 className.includes('gallery') ||
-                                 className.includes('work') ||
-                                 className.includes('portfolio') ||
-                                 parentClasses.includes('gallery') ||
-                                 parentClasses.includes('project') ||
-                                 parentClasses.includes('work') ||
-                                 parentClasses.includes('portfolio') ||
-                                 interactiveElement.closest('#gallery') ||
-                                 interactiveElement.closest('[id*="project"]') ||
-                                 interactiveElement.closest('[id*="work"]');
-
-        if (isPortfolioElement) {
-          memoizedSetCursorVariant('hover');
-          memoizedSetCursorText('View');
-        } else {
-          memoizedSetCursorVariant('hover');
-          memoizedSetCursorText('');
+          // Use optimized portfolio detection
+          if (isPortfolioElement(interactiveElement)) {
+            memoizedSetCursorVariant('hover');
+            memoizedSetCursorText('View');
+          } else {
+            memoizedSetCursorVariant('hover');
+            memoizedSetCursorText('');
+          }
         }
-      }
-      // If hovering over form fields, keep cursor in default state
-      else if (formField && !interactiveElement) {
-        if (currentInteractiveElement) {
-          currentInteractiveElement = null;
-          memoizedSetIsHovering(false);
-          memoizedSetCursorVariant('default');
-          memoizedSetCursorText('');
+        // If hovering over form fields, keep cursor in default state
+        else if (formField && !interactiveElement) {
+          if (currentInteractiveElement) {
+            currentInteractiveElement = null;
+            memoizedSetIsHovering(false);
+            memoizedSetCursorVariant('default');
+            memoizedSetCursorText('');
+          }
         }
-      }
-      // If we're no longer over an interactive element, debounce the reset
-      else if (!interactiveElement && !formField && currentInteractiveElement) {
-        debounceTimer = setTimeout(() => {
-          currentInteractiveElement = null;
-          memoizedSetIsHovering(false);
-          memoizedSetCursorVariant('default');
-          memoizedSetCursorText('');
-        }, 50); // Small delay to prevent flickering
-      }
+        // If we're no longer over an interactive element, debounce the reset
+        else if (!interactiveElement && !formField && currentInteractiveElement) {
+          debounceTimer = setTimeout(() => {
+            currentInteractiveElement = null;
+            memoizedSetIsHovering(false);
+            memoizedSetCursorVariant('default');
+            memoizedSetCursorText('');
+          }, 50); // Small delay to prevent flickering
+        }
+      });
     };
 
     const handleMouseDown = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      const interactiveElement = target.closest('a, button, [data-cursor-hover]') as HTMLElement;
-      
+      const interactiveElement = target.closest(INTERACTIVE_SELECTORS) as HTMLElement;
+
       if (interactiveElement) {
-        const href = interactiveElement.getAttribute('href') || '';
-        const className = interactiveElement.className || '';
-        const parentClasses = interactiveElement.closest('[class*="gallery"], [class*="project"], [class*="work"], [class*="portfolio"]')?.className || '';
-
-        const isPortfolioElement = href.includes('/projects/') ||
-                                 className.includes('project') ||
-                                 className.includes('gallery') ||
-                                 className.includes('work') ||
-                                 className.includes('portfolio') ||
-                                 parentClasses.includes('gallery') ||
-                                 parentClasses.includes('project') ||
-                                 parentClasses.includes('work') ||
-                                 parentClasses.includes('portfolio') ||
-                                 interactiveElement.closest('#gallery') ||
-                                 interactiveElement.closest('[id*="project"]') ||
-                                 interactiveElement.closest('[id*="work"]');
-
-        if (isPortfolioElement) {
+        // Use the same optimized portfolio detection
+        if (isPortfolioElement(interactiveElement)) {
           memoizedSetCursorVariant('click');
         }
-        
+
         // Restore default cursor after clicking on buttons only
         if (interactiveElement.tagName === 'BUTTON') {
           setTimeout(() => {
@@ -147,12 +151,15 @@ export default function RootLayout({
     window.addEventListener('mouseup', handleMouseUp);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mouseup', handleMouseUp);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
       if (debounceTimer) {
         clearTimeout(debounceTimer);
       }
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
       currentInteractiveElement = null;
     };
   }, [memoizedSetIsHovering, memoizedSetCursorText, memoizedSetCursorVariant]);
