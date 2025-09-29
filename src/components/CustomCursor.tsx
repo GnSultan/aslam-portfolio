@@ -23,6 +23,10 @@ export default function CustomCursor() {
   const velocityRef = useRef({ x: 0, y: 0 })
   const rippleIdCounter = useRef(0)
 
+  // Magnetic interaction state
+  const [magneticTarget, setMagneticTarget] = useState<HTMLElement | null>(null)
+  const magneticOffset = useRef({ x: 0, y: 0 })
+
   // Use Framer Motion values for ultra-smooth interpolation
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
@@ -74,7 +78,45 @@ export default function CustomCursor() {
     setSpringConfig(newConfig)
   }, [getSpringConfig])
 
-  // Enhanced mouse tracking with velocity calculation for adaptive smoothness
+  // Magnetic interaction detection
+  const detectMagneticElements = useCallback((clientX: number, clientY: number) => {
+    const magneticElements = document.querySelectorAll('[data-magnetic]')
+    let closestElement: HTMLElement | null = null
+    let shortestDistance = Infinity
+    const magneticRadius = 120 // Pixels from cursor to start magnetic effect
+
+    for (let i = 0; i < magneticElements.length; i++) {
+      const element = magneticElements[i] as HTMLElement
+      const rect = element.getBoundingClientRect()
+      const centerX = rect.left + rect.width / 2
+      const centerY = rect.top + rect.height / 2
+      const distance = Math.sqrt(Math.pow(clientX - centerX, 2) + Math.pow(clientY - centerY, 2))
+
+      if (distance < magneticRadius && distance < shortestDistance) {
+        shortestDistance = distance
+        closestElement = element
+      }
+    }
+
+    if (closestElement && shortestDistance < magneticRadius) {
+      const rect = closestElement.getBoundingClientRect()
+      const centerX = rect.left + rect.width / 2
+      const centerY = rect.top + rect.height / 2
+
+      // Calculate magnetic pull strength (stronger when closer)
+      const strength = Math.max(0, (magneticRadius - shortestDistance) / magneticRadius)
+      const pullX = (centerX - clientX) * strength * 0.3
+      const pullY = (centerY - clientY) * strength * 0.3
+
+      magneticOffset.current = { x: pullX, y: pullY }
+      setMagneticTarget(closestElement)
+    } else {
+      magneticOffset.current = { x: 0, y: 0 }
+      setMagneticTarget(null)
+    }
+  }, [])
+
+  // Enhanced mouse tracking with velocity calculation and magnetic detection
   const mouseMove = useCallback((e: MouseEvent) => {
     const deltaX = e.clientX - lastMousePosition.current.x
     const deltaY = e.clientY - lastMousePosition.current.y
@@ -83,14 +125,21 @@ export default function CustomCursor() {
     velocityRef.current = { x: deltaX, y: deltaY }
     lastMousePosition.current = { x: e.clientX, y: e.clientY }
 
+    // Detect magnetic elements near cursor
+    detectMagneticElements(e.clientX, e.clientY)
+
+    // Apply magnetic offset to cursor position
+    const finalX = e.clientX + magneticOffset.current.x
+    const finalY = e.clientY + magneticOffset.current.y
+
     // Direct update to motion values - bypasses React state for maximum smoothness
-    mouseX.set(e.clientX)
-    mouseY.set(e.clientY)
+    mouseX.set(finalX)
+    mouseY.set(finalY)
 
     if (!isVisible) {
       setIsVisible(true)
     }
-  }, [mouseX, mouseY, isVisible])
+  }, [mouseX, mouseY, isVisible, detectMagneticElements])
 
   // Initialize cursor position on mount
   useEffect(() => {
@@ -176,31 +225,6 @@ export default function CustomCursor() {
       }
     }
 
-    const handleMouseDown = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      const isInteractive = target.closest('a, button, [data-cursor-hover], [role="button"], [role="link"]')
-
-      if (isInteractive) {
-        setIsClicking(true)
-      }
-    }
-
-    const handleMouseUp = () => {
-      setIsClicking(false)
-    }
-
-    const handleTouchStart = (e: TouchEvent) => {
-      const target = e.target as HTMLElement
-      const isInteractive = target.closest('a, button, [data-cursor-hover], [role="button"], [role="link"]')
-
-      if (isInteractive) {
-        setIsClicking(true)
-      }
-    }
-
-    const handleTouchEnd = () => {
-      setIsClicking(false)
-    }
 
     // Simple pointer events for universal support
     const handlePointerDown = (e: PointerEvent) => {
@@ -239,7 +263,7 @@ export default function CustomCursor() {
       window.removeEventListener('pointerup', handlePointerUp)
       window.removeEventListener('click', handleClick as EventListener)
     }
-  }, [createClickRipple])
+  }, [createClickRipple, mouseX, mouseY])
 
   // Clear ripples on navigation events
   useEffect(() => {

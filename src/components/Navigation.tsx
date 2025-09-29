@@ -166,6 +166,7 @@ export default function Navigation() {
             }`}
             aria-label="Aslam - Home"
             data-cursor-text="Home"
+            data-magnetic
           >
             Aslam
           </Link>
@@ -187,6 +188,7 @@ export default function Navigation() {
               }`}
               aria-label="Navigate to Home section"
               data-cursor-text="Go to Home"
+              data-magnetic
               onClick={(e) => {
                 e.preventDefault()
                 navigateToSection('hero')
@@ -203,6 +205,7 @@ export default function Navigation() {
               }`}
               aria-label="Navigate to Work section"
               data-cursor-text="View Work"
+              data-magnetic
               onClick={(e) => {
                 e.preventDefault()
                 navigateToSection('projects')
@@ -219,6 +222,7 @@ export default function Navigation() {
               }`}
               aria-label="Navigate to About section"
               data-cursor-text="About Me"
+              data-magnetic
               onClick={(e) => {
                 e.preventDefault()
                 navigateToSection('about')
@@ -243,6 +247,7 @@ export default function Navigation() {
               className="text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1"
               aria-label="Visit Aslam's GitHub profile (opens in new tab)"
               data-cursor-text="GitHub"
+              data-magnetic
             >
               Github
             </a>
@@ -253,6 +258,7 @@ export default function Navigation() {
               className="text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1"
               aria-label="Visit Aslam's LinkedIn profile (opens in new tab)"
               data-cursor-text="LinkedIn"
+              data-magnetic
             >
               LinkedIn
             </a>
@@ -261,6 +267,7 @@ export default function Navigation() {
               className="text-text/70 hover:text-primary transition-colors duration-300 link-hover focus:outline-none rounded px-2 py-1"
               aria-label="Send email to Aslam"
               data-cursor-text="Say Hello"
+              data-magnetic
             >
               Contact
             </a>
@@ -268,6 +275,7 @@ export default function Navigation() {
               href="/admin"
               className="text-text/70 hover:text-primary transition-colors duration-300 link-hover focus:outline-none rounded px-2 py-1"
               aria-label="Admin panel"
+              data-magnetic
             >
               Admin
             </Link>

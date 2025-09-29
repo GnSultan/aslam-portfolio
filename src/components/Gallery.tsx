@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence, useMotionValue, PanInfo, useSpring } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { getProjects } from '@/lib/projects'
@@ -11,9 +12,12 @@ interface GalleryImage {
   src: string
   alt: string
   projectTitle: string
+  projectId: string
+  imageIndex: number
 }
 
 export default function Gallery() {
+  const router = useRouter()
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
   const [fullscreenImage, setFullscreenImage] = useState<GalleryImage | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -25,66 +29,51 @@ export default function Gallery() {
   // Direct motion value - no spring layers
   const x = useMotionValue(0)
   const animationRef = useRef<number | undefined>(undefined)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const itemRefs = useRef<HTMLDivElement[]>([])
 
   // Parallax effect motion values with smooth spring
   const parallaxTarget = useMotionValue(0)
   const parallaxOffset = useSpring(parallaxTarget, {
-    damping: 25,
-    stiffness: 200,
-    mass: 0.8,
-    restSpeed: 0.1,
-    restDelta: 0.1
+    damping: 32,
+    stiffness: 160,
+    mass: 0.9,
+    restSpeed: 0.05,
+    restDelta: 0.05
   })
 
 
 
-  // Load dynamic images from projects
+  // Load dynamic images from projects (use project.images when available)
   useEffect(() => {
-    const projects = getProjects()
+    let projects = getProjects()
+    if (!projects || projects.length === 0) {
+      // force init defaults by calling once
+      projects = getProjects()
+    }
     const images: GalleryImage[] = []
 
     projects.forEach(project => {
-      // Use main image
-      images.push({
-        id: `${project.id}-main`,
-        src: project.image,
-        alt: project.title,
-        projectTitle: project.title
-      })
+      const sourceImages = Array.isArray(project.images) && project.images.length > 0
+        ? project.images
+        : (project.image ? [project.image] : [])
 
-      // Add gallery images if they exist
-      if (project.images && project.images.length > 0) {
-        project.images.forEach((img, index) => {
-          if (img !== project.image) { // Avoid duplicates
-            images.push({
-              id: `${project.id}-gallery-${index}`,
-              src: img,
-              alt: `${project.title} - Gallery Image ${index + 1}`,
-              projectTitle: project.title
-            })
-          }
+      sourceImages.forEach((img, index) => {
+        images.push({
+          id: `${project.id}-${index}`,
+          projectId: project.id,
+          imageIndex: index,
+          src: img,
+          alt: `${project.title} - ${index === 0 ? 'Cover' : 'Image ' + (index + 1)}`,
+          projectTitle: project.title,
         })
-      }
+      })
     })
 
-    // Create massive array for truly infinite scroll
-    const duplicatedImages = [
-      ...images.map(img => ({ ...img, id: `${img.id}-set1` })),
-      ...images.map(img => ({ ...img, id: `${img.id}-set2` })),
-      ...images.map(img => ({ ...img, id: `${img.id}-set3` })),
-      ...images.map(img => ({ ...img, id: `${img.id}-set4` })),
-      ...images.map(img => ({ ...img, id: `${img.id}-set5` })),
-      ...images.map(img => ({ ...img, id: `${img.id}-set6` })),
-      ...images.map(img => ({ ...img, id: `${img.id}-set7` })),
-      ...images.map(img => ({ ...img, id: `${img.id}-set8` })),
-      ...images.map(img => ({ ...img, id: `${img.id}-set9` })),
-      ...images.map(img => ({ ...img, id: `${img.id}-set10` })),
-    ]
-
-    setGalleryImages(duplicatedImages)
+    setGalleryImages(images)
   }, [])
 
-  // Truly infinite auto-scroll - never resets position
+  // Truly infinite auto-scroll with modulo wrapping
   useEffect(() => {
     if (galleryImages.length === 0) return
 
@@ -92,8 +81,8 @@ export default function Gallery() {
       // Only auto-scroll when not dragging
       if (!isDragging) {
         const currentX = x.get()
-        const newX = currentX - 1.2 // Consistent speed
-        x.set(newX) // Never reset, just keep going infinitely
+        const newX = currentX - 0.8 // slightly slower for smoother feel
+        x.set(newX)
       }
 
       animationRef.current = requestAnimationFrame(animate)
@@ -108,6 +97,26 @@ export default function Gallery() {
     }
   }, [galleryImages, isDragging, x])
 
+  // Measure total track width for precise wrapping
+  const totalWidthRef = useRef(0)
+  useEffect(() => {
+    if (!trackRef.current) return
+    const children = itemRefs.current
+    const total = children.reduce((sum, el) => sum + (el?.offsetWidth || 0), 0)
+    totalWidthRef.current = total
+  }, [galleryImages])
+
+  // Wrap x value precisely on change
+  useEffect(() => {
+    const unsub = x.on("change", (val) => {
+      const total = totalWidthRef.current
+      if (total <= 0) return
+      if (val <= -total) x.set(val + total)
+      else if (val >= 0) x.set(val - total)
+    })
+    return () => unsub()
+  }, [x])
+
   // Simple drag handlers - let Framer Motion handle physics
   const handleDragStart = useCallback(() => {
     setIsDragging(true)
@@ -119,33 +128,52 @@ export default function Gallery() {
     setDragDistance(prev => prev + Math.abs(info.delta.x))
 
     // Apply subtle parallax offset (opposite direction, minimal for natural depth effect)
-    const maxParallaxOffset = 12
-    const parallaxMultiplier = 0.25
+    const maxParallaxOffset = 6
+    const parallaxMultiplier = 0.12
     const newParallaxOffset = Math.max(-maxParallaxOffset, Math.min(maxParallaxOffset, -info.delta.x * parallaxMultiplier))
     parallaxTarget.set(parallaxTarget.get() + newParallaxOffset)
   }, [parallaxTarget])
 
   const handleDragEnd = useCallback(() => {
     setIsDragging(false)
-    // Let Framer Motion handle all momentum naturally - no position manipulation
-
     // Smoothly return parallax offset to center using Framer Motion's spring
     parallaxTarget.set(0)
   }, [parallaxTarget])
 
-  // Handle image click for fullscreen
+  // Handle image click for fullscreen or navigation
   const handleImageClick = useCallback((image: GalleryImage, index: number) => {
     const dragThreshold = 5
+    if (isDragging) return
     if (dragDistance < dragThreshold) {
-      setFullscreenImage(image)
-      setCurrentIndex(index)
+      if (image.projectId) {
+        // Store transition data for shared element animation
+        sessionStorage.setItem('gallery-transition', JSON.stringify({
+          imageId: `${image.projectId}-${image.imageIndex}`,
+          imageSrc: image.src,
+          imageAlt: image.alt,
+          projectTitle: image.projectTitle,
+          projectId: image.projectId,
+          imageIndex: image.imageIndex,
+          fromGallery: true
+        }))
+
+        // Navigate to project page with router to preserve shared element timing
+        router.push(`/projects/${image.projectId}`)
+        // Reset interaction state for when user navigates back
+        setDragDistance(0)
+        setIsDragging(false)
+      } else {
+        // Fallback to fullscreen
+        setFullscreenImage(image)
+        setCurrentIndex(index)
+      }
     }
-  }, [dragDistance])
+  }, [dragDistance, isDragging, router])
 
   // Cursor interactions
   const handleMouseEnter = useCallback(() => {
     setIsHovering(true)
-    setCursorText('Drag')
+    setCursorText('View Project')
     setCursorVariant('hover')
   }, [setIsHovering, setCursorText, setCursorVariant])
 
@@ -227,62 +255,63 @@ export default function Gallery() {
         >
           <motion.div
             className="flex gap-4 sm:gap-6 md:gap-8 pb-4 px-4 sm:px-6 lg:px-16"
+            ref={trackRef}
             style={{
               x,
               cursor: isDragging ? 'grabbing' : 'grab',
-              willChange: 'transform'
+              willChange: 'transform',
+              transform: 'translate3d(0,0,0)'
             }}
             drag="x"
             dragConstraints={false}
-            dragElastic={0.1}
+            dragElastic={0.08}
             dragMomentum={true}
             dragTransition={{
-              power: 0.25,
-              timeConstant: 250,
-              bounceStiffness: 300,
-              bounceDamping: 30
+              power: 0.2,
+              timeConstant: 220,
+              bounceStiffness: 280,
+              bounceDamping: 28
             }}
             onDragStart={handleDragStart}
             onDrag={handleDrag}
-            onDragEnd={handleDragEnd}
+          onDragEnd={handleDragEnd}
           >
-            {galleryImages.map((image, index) => (
+            {[...galleryImages, ...galleryImages].map((image, index) => (
               <motion.div
-                key={image.id}
+                key={image.id + '-' + index}
+                ref={(el) => { if (el) itemRefs.current[index] = el }}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{
                   opacity: 1,
-                  scale: isDragging ? 0.95 : 1.0
+                  scale: isDragging ? 0.975 : 1.0
                 }}
                 transition={{
-                  opacity: { duration: 0.6, delay: (index % 8) * 0.05 },
+                  opacity: { duration: 0.5, delay: (index % 8) * 0.03 },
                   scale: {
                     type: 'spring',
-                    damping: 30,
-                    stiffness: 400,
-                    mass: 0.8
+                    damping: 26,
+                    stiffness: 360,
+                    mass: 0.85
                   }
                 }}
                 className="flex-shrink-0 w-[280px] sm:w-[350px] md:w-[450px] lg:w-[550px] xl:w-[600px] h-[350px] sm:h-[450px] md:h-[600px] lg:h-[700px] xl:h-[750px] group cursor-pointer"
                 onClick={() => handleImageClick(image, index)}
-                whileHover={{
-                  scale: isDragging ? 0.95 : 1.02,
-                  transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] }
-                }}
+                data-magnetic
               >
                 <div className="relative w-full h-full overflow-hidden rounded-lg">
                   <motion.div
                     className="w-full h-full"
+                    layoutId={`gallery-image-${image.projectId}-${image.imageIndex}`}
                     style={{
                       x: parallaxOffset,
-                      scale: 1.08, // Subtle scale up to contain minimal parallax movement
+                      scale: 1.04, // smaller to reduce perceived wobble
                     }}
                   >
                     <Image
                       src={image.src}
                       alt={image.alt}
                       fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="object-cover transition-transform duration-700"
                       sizes="(max-width: 768px) 600px, 600px"
                       quality={90}
                       priority={index < 4}
@@ -296,19 +325,7 @@ export default function Gallery() {
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
 
-                  {/* Project info overlay */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      whileHover={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                      className="bg-black/80 backdrop-blur-md rounded-xl p-4 border border-white/10"
-                    >
-                      <p className="text-white text-sm font-semibold truncate">
-                        {image.projectTitle}
-                      </p>
-                    </motion.div>
-                  </div>
+                  {/* Project info overlay removed for cleaner presentation */}
                 </div>
               </motion.div>
             ))}

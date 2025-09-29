@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Project } from '@/types/project'
 import { getFeaturedProjects } from '@/lib/projects'
 import ParallaxImage from './ParallaxImage'
@@ -10,6 +10,7 @@ import ParallaxImage from './ParallaxImage'
 export default function FeaturedWork() {
   const [projects, setProjects] = useState<Project[]>([])
   const [activeProject, setActiveProject] = useState<Project | null>(null)
+  
 
   useEffect(() => {
     const loadProjects = () => {
@@ -84,15 +85,34 @@ export default function FeaturedWork() {
               >
                 <Link
                   href={`/projects/${project.id}`}
-                  className={`block w-full text-left p-4 rounded-lg transition-all duration-300 relative ${
-                    activeProject?.id === project.id 
-                      ? 'text-text' 
+                  className={`block w-full text-left p-4 rounded-lg transition-all duration-300 relative group ${
+                    activeProject?.id === project.id
+                      ? 'text-text'
                       : 'text-text/70 hover:text-text'
                   }`}
+                  data-magnetic
                 >
-                  <h3 className="text-xl font-medium mb-1" data-text-hover>{project.title}</h3>
-                  <p className="text-sm text-text-secondary" data-text-hover>{project.description}</p>
-                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-medium mb-1" data-text-hover>{project.title}</h3>
+                      <p className="text-sm text-text-secondary" data-text-hover>{project.description}</p>
+                    </div>
+                    {project.liveUrl && (
+                      <motion.div
+                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        initial={{ scale: 0.8 }}
+                        whileHover={{ scale: 1 }}
+                      >
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+
                   {/* Active bar like navigation */}
                   <div className={`absolute bottom-0 left-0 w-0 h-[1px] bg-current transition-all duration-300 ${
                     activeProject?.id === project.id ? 'w-full' : ''
@@ -168,6 +188,7 @@ export default function FeaturedWork() {
           </motion.div>
         </div>
       </div>
+      
     </section>
   )
 }

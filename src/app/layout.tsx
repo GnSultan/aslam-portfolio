@@ -6,8 +6,11 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import StructuredData from "@/components/StructuredData";
 import CustomCursor from "@/components/CustomCursor";
+import SmartPreloader from "@/components/SmartPreloader";
 import { useCursorStore } from "@/hooks/useCursorStore";
 import { useEffect, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 
 
@@ -16,6 +19,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
   const { setIsHovering, setCursorText, setCursorVariant } = useCursorStore();
 
   // Memoize the store functions to prevent useEffect dependency changes
@@ -180,7 +184,14 @@ export default function RootLayout({
       </head>
       <body>
         <CustomCursor />
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmartPreloader />
+        <SmoothScroll>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div key={pathname}>
+              {children}
+            </motion.div>
+          </AnimatePresence>
+        </SmoothScroll>
       </body>
     </html>
   );

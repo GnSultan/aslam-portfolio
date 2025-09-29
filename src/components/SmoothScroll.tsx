@@ -2,15 +2,21 @@
 
 import { ReactNode, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
-import Lenis from 'lenis'
+import Lenis from '@studio-freight/lenis'
 
 const SmoothScroll = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname()
 
   useEffect(() => {
+    const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: prefersReduced ? 0.6 : 1.5,
+      easing: prefersReduced
+        ? (t: number) => t
+        : (t: number) => 1 - Math.pow(1 - t, 3),
+      smoothWheel: true,
+      wheelMultiplier: prefersReduced ? 1.0 : 1.12,
     })
 
     // Make Lenis globally available
