@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Project } from '@/types/project'
 import { getProjects, deleteProject } from '@/lib/projects'
 
 export default function AdminPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -39,6 +41,18 @@ export default function AdminPage() {
     }
   }
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/auth', {
+        method: 'DELETE',
+      })
+      router.push('/admin/login')
+      router.refresh()
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -63,12 +77,20 @@ export default function AdminPage() {
                 Manage your portfolio projects
               </p>
             </div>
-            <Link
-              href="/admin/projects/new"
-              className="px-6 py-3 bg-text text-background rounded-lg hover:bg-text/90 transition-colors"
-            >
-              Add New Project
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                href="/admin/projects/new"
+                className="px-6 py-3 bg-text text-background rounded-lg hover:bg-text/90 transition-colors"
+              >
+                Add New Project
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="px-6 py-3 border border-secondary text-text rounded-lg hover:bg-secondary/20 transition-colors"
+              >
+                Logout
+              </button>
+            </div>
           </div>
 
           {/* Projects List */}
