@@ -40,7 +40,7 @@ export default function ProjectTestimonial({ testimonial, className = '' }: Proj
               transition={{ duration: 0.6 }}
               className="absolute -top-4 -left-2 text-6xl text-text/20 font-serif"
             >
-              "
+              &ldquo;
             </motion.div>
 
             {/* Quote text */}
@@ -73,8 +73,8 @@ export default function ProjectTestimonial({ testimonial, className = '' }: Proj
               transition={{ duration: 0.6, delay: 0.1 }}
               className="absolute -bottom-8 right-0 text-6xl text-text/20 font-serif"
             >
-              "
-            </motion.div>
+              &rdquo;
+
           </div>
         </motion.div>
       </div>

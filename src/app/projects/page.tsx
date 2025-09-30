@@ -264,7 +264,7 @@ export default function ProjectsPage() {
           <div className="container-wide text-center">
             <h2 className="h2 mb-6">Ready to work together?</h2>
             <p className="text-xl text-text-secondary leading-relaxed max-w-2xl mx-auto mb-8">
-              Let's discuss your next project and bring your ideas to life.
+              Let&apos;s discuss your next project and bring your ideas to life.
             </p>
             <a
               href="mailto:hello@aslam.com"

@@ -2,6 +2,7 @@ import { Project, ProjectFormData } from '@/types/project';
 import { supabase } from './supabase';
 
 // Database field mapping (snake_case in DB, camelCase in code)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapDbToProject = (dbRow: any): Project => {
   return {
     id: dbRow.id,

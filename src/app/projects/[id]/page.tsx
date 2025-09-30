@@ -401,9 +401,9 @@ export default function ProjectPage() {
         <GlobalFooterReveal>
           <section className="section-spaced">
             <div className="container-wide text-center">
-              <h2 className="h2 mb-6">Let's build something great</h2>
+              <h2 className="h2 mb-6">Let&apos;s build something great</h2>
               <p className="text-xl text-text-secondary leading-relaxed max-w-2xl mx-auto mb-8">
-                Have a project like this in mind? I'd love to hear about it.
+                Have a project like this in mind? I&apos;d love to hear about it.
               </p>
               <a
                 href="mailto:hello@aslam.com"

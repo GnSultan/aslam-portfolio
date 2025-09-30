@@ -124,6 +124,7 @@ export default function Gallery() {
     setDragDistance(0)
   }, [])
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDrag = useCallback((_event: any, info: PanInfo) => {
     setDragDistance(prev => prev + Math.abs(info.delta.x))
 

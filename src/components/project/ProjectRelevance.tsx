@@ -41,7 +41,7 @@ export default function ProjectRelevance({ note, className = '' }: ProjectReleva
                 whileTap={{ scale: 0.95 }}
                 className="inline-flex items-center gap-2 text-text font-medium group"
               >
-                <span>Let's talk</span>
+                <span>Let&apos;s talk</span>
                 <motion.svg
                   className="w-5 h-5 group-hover:translate-x-1 transition-transform"
                   fill="none"
