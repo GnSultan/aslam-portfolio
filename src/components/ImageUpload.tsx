@@ -104,16 +104,16 @@ export default function ImageUpload({ value, onChange, placeholder = "Enter imag
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-text"
         />
       </div>
 
       {/* Upload Area */}
       <div
         className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-          dragActive 
-            ? 'border-primary bg-primary/5' 
-            : 'border-secondary hover:border-primary/50'
+          dragActive
+            ? 'border-text bg-text/5'
+            : 'border-secondary hover:border-text/50'
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -130,7 +130,7 @@ export default function ImageUpload({ value, onChange, placeholder = "Enter imag
 
         {isUploading ? (
           <div className="space-y-2">
-            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <div className="w-8 h-8 border-2 border-text border-t-transparent rounded-full animate-spin mx-auto"></div>
             <p className="text-text-secondary">Uploading...</p>
           </div>
         ) : (
@@ -152,7 +152,7 @@ export default function ImageUpload({ value, onChange, placeholder = "Enter imag
               <button
                 type="button"
                 onClick={openFileDialog}
-                className="text-primary hover:text-primary/80 font-medium"
+                className="text-text hover:text-text/80 font-medium"
               >
                 Click to upload
               </button>

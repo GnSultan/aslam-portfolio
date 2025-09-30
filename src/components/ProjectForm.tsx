@@ -199,7 +199,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto p-6">
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-6 text-primary">Project Snapshot</h2>
+        <h2 className="text-2xl font-bold mb-6 text-text">Project Snapshot</h2>
         <p className="text-text-secondary mb-6">Basic information about the project</p>
 
         {/* Title */}
@@ -212,7 +212,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
             required
             value={formData.title}
             onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-            className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
             placeholder="e.g., Flow"
           />
         </div>
@@ -226,7 +226,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
             required
             value={formData.description}
             onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-            className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
             rows={3}
             placeholder="A modern productivity app that helps teams stay focused and ship faster"
           />
@@ -244,7 +244,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               type="text"
               value={formData.client || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, client: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               placeholder="e.g., FlowHQ"
             />
           </div>
@@ -258,7 +258,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               required
               value={formData.category}
               onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as Category }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
             >
               {categories.map(cat => (
                 <option key={cat.value} value={cat.value}>{cat.label}</option>
@@ -276,7 +276,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               required
               value={formData.year}
               onChange={(e) => setFormData(prev => ({ ...prev, year: parseInt(e.target.value) }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               placeholder="2025"
             />
           </div>
@@ -290,7 +290,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               type="text"
               value={formData.duration || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               placeholder="e.g., 4 months"
             />
           </div>
@@ -305,7 +305,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               required
               value={formData.role}
               onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               placeholder="e.g., Lead Product Designer"
             />
           </div>
@@ -319,7 +319,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               required
               value={formData.status}
               onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as Status }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
             >
               {statuses.map(status => (
                 <option key={status.value} value={status.value}>{status.label}</option>
@@ -335,7 +335,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               type="checkbox"
               checked={formData.featured}
               onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
-              className="w-4 h-4 text-primary border-secondary rounded focus:ring-primary"
+              className="w-4 h-4 text-text border-secondary rounded focus:ring-text"
             />
             <label className="ml-2 text-sm font-medium">
               Featured Project
@@ -350,7 +350,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               type="number"
               value={formData.order}
               onChange={(e) => setFormData(prev => ({ ...prev, order: parseInt(e.target.value) }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               placeholder="0"
             />
           </div>
@@ -359,7 +359,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Images */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-6 text-primary">Visual Showcase</h2>
+        <h2 className="text-2xl font-bold mb-6 text-text">Visual Showcase</h2>
 
         {/* Hero Image */}
         <div className="mb-6">
@@ -387,7 +387,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* The Challenge */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-primary">The Challenge</h2>
+        <h2 className="text-2xl font-bold mb-4 text-text">The Challenge</h2>
         <p className="text-text-secondary mb-6">One simple sentence that anyone can understand</p>
 
         <textarea
@@ -402,7 +402,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Approach */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-primary">Approach</h2>
+        <h2 className="text-2xl font-bold mb-4 text-text">Approach</h2>
         <p className="text-text-secondary mb-6">2-3 key moves you made (plain language, not jargon)</p>
 
         {/* List of bullets */}
@@ -436,7 +436,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
           <button
             type="button"
             onClick={addApproachBullet}
-            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+            className="px-6 py-2 bg-text text-background rounded-lg hover:bg-text/90"
           >
             Add
           </button>
@@ -445,7 +445,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Value Delivered */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-primary">Value Delivered</h2>
+        <h2 className="text-2xl font-bold mb-4 text-text">Value Delivered</h2>
         <p className="text-text-secondary mb-6">Talk outcomes, not deliverables</p>
 
         {/* List of values */}
@@ -453,7 +453,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             {formData.valueDelivered.map((item, index) => (
               <div key={index} className="p-4 bg-secondary/10 rounded-lg text-center relative">
-                <div className="text-3xl font-bold text-primary mb-2">{item.value}</div>
+                <div className="text-3xl font-bold text-text mb-2">{item.value}</div>
                 <div className="text-sm">{item.label}</div>
                 <button
                   type="button"
@@ -475,7 +475,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               type="text"
               value={newValueValue}
               onChange={(e) => setNewValueValue(e.target.value)}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               placeholder="e.g., 3x, 40%, 4.9/5"
             />
           </div>
@@ -485,7 +485,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               type="text"
               value={newValueLabel}
               onChange={(e) => setNewValueLabel(e.target.value)}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               placeholder="e.g., Faster task completion"
             />
           </div>
@@ -501,7 +501,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Client Perspective */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-primary">Client Perspective</h2>
+        <h2 className="text-2xl font-bold mb-4 text-text">Client Perspective</h2>
         <p className="text-text-secondary mb-6">Short authentic feedback (optional)</p>
 
         <div className="space-y-4">
@@ -517,7 +517,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
                   role: prev.testimonial?.role || '',
                 }
               }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               rows={3}
               placeholder="Flow feels like magic. It's the first productivity tool that actually makes us more productive instead of just tracking our work."
             />
@@ -537,7 +537,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
                     role: prev.testimonial?.role || '',
                   }
                 }))}
-                className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
                 placeholder="Sarah Chen"
               />
             </div>
@@ -555,7 +555,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
                     role: e.target.value,
                   }
                 }))}
-                className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
                 placeholder="Product Lead at FlowHQ"
               />
             </div>
@@ -565,7 +565,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Relevance Note */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-primary">Relevance / Personal Connection</h2>
+        <h2 className="text-2xl font-bold mb-4 text-text">Relevance / Personal Connection</h2>
         <p className="text-text-secondary mb-6">Connect this project to future clients</p>
 
         <textarea
@@ -579,7 +579,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Tech Stack */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-primary">Tech Stack</h2>
+        <h2 className="text-2xl font-bold mb-4 text-text">Tech Stack</h2>
 
         {/* List of technologies */}
         {formData.technologies.length > 0 && (
@@ -615,7 +615,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
           <button
             type="button"
             onClick={addTechnology}
-            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+            className="px-6 py-2 bg-text text-background rounded-lg hover:bg-text/90"
           >
             Add
           </button>
@@ -624,7 +624,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Tags */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-primary">Tags</h2>
+        <h2 className="text-2xl font-bold mb-4 text-text">Tags</h2>
 
         {/* List of tags */}
         {formData.tags.length > 0 && (
@@ -632,7 +632,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
             {formData.tags.map((tag, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-primary/10 text-primary rounded-lg flex items-center gap-2"
+                className="px-3 py-1 bg-text/10 text-text rounded-lg flex items-center gap-2"
               >
                 {tag}
                 <button
@@ -660,7 +660,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
           <button
             type="button"
             onClick={addTag}
-            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+            className="px-6 py-2 bg-text text-background rounded-lg hover:bg-text/90"
           >
             Add
           </button>
@@ -669,7 +669,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Links */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-primary">Links</h2>
+        <h2 className="text-2xl font-bold mb-4 text-text">Links</h2>
 
         <div className="space-y-4">
           <div>
@@ -678,7 +678,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               type="url"
               value={formData.liveUrl || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, liveUrl: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               placeholder="https://example.com"
             />
           </div>
@@ -689,7 +689,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               type="url"
               value={formData.githubUrl || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, githubUrl: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               placeholder="https://github.com/..."
             />
           </div>
@@ -700,7 +700,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               type="url"
               value={formData.behanceUrl || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, behanceUrl: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               placeholder="https://behance.net/..."
             />
           </div>
@@ -711,7 +711,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               type="url"
               value={formData.websiteEmbed || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, websiteEmbed: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
               placeholder="https://example.com (for iframe)"
             />
           </div>
@@ -725,7 +725,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
           disabled={loading}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="flex-1 px-8 py-4 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
+          className="flex-1 px-8 py-4 bg-text text-background rounded-lg hover:bg-text/90 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
         >
           {loading ? 'Saving...' : mode === 'create' ? 'Create Project' : 'Update Project'}
         </motion.button>
