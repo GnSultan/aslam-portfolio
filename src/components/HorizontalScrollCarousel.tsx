@@ -32,7 +32,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           
           {/* Featured badge */}
           {project.featured && (
-            <div className="absolute top-4 right-4 bg-primary text-background px-3 py-1 rounded-full text-xs font-medium">
+            <div className="absolute top-4 right-4 bg-text text-background px-3 py-1 rounded-full text-xs font-medium">
               Featured
             </div>
           )}
@@ -102,11 +102,11 @@ export default function HorizontalScrollCarousel({ projects, currentProjectId }:
               className="group"
             >
               <Link href="/projects">
-                <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-secondary/20 border-2 border-dashed border-text/20 hover:border-primary/40 transition-all duration-300 flex items-center justify-center">
+                <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-secondary/20 border-2 border-dashed border-text/20 hover:border-text/40 transition-all duration-300 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-text/10 flex items-center justify-center group-hover:bg-text/20 transition-colors duration-300">
                       <svg
-                        className="w-8 h-8 text-primary"
+                        className="w-8 h-8 text-text"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"

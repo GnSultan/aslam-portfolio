@@ -17,9 +17,9 @@ export default function FeaturedWork() {
   const mouseMoveCountRef = useRef(0)
 
   useEffect(() => {
-    const loadProjects = () => {
+    const loadProjects = async () => {
       try {
-        const featuredProjects = getFeaturedProjects()
+        const featuredProjects = await getFeaturedProjects()
         setProjects(featuredProjects)
         if (featuredProjects.length > 0) {
           setActiveProject(featuredProjects[0])

@@ -33,7 +33,6 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
   const [formData, setFormData] = useState<ProjectFormData>({
     title: '',
     description: '',
-    longDescription: '',
     image: '',
     images: [],
     category: 'web',
@@ -50,52 +49,54 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
     githubUrl: '',
     behanceUrl: '',
     websiteEmbed: '',
-    caseStudy: {
-      challenge: '',
-      solution: '',
-      process: [''],
-      results: [''],
-    },
+    challenge: '',
+    approachBullets: [],
+    valueDelivered: [],
+    testimonial: undefined,
+    relevanceNote: '',
   })
 
   const [newTag, setNewTag] = useState('')
   const [newTech, setNewTech] = useState('')
-  const [newProcessStep, setNewProcessStep] = useState('')
-  const [newResult, setNewResult] = useState('')
+  const [newApproachBullet, setNewApproachBullet] = useState('')
+  const [newValueLabel, setNewValueLabel] = useState('')
+  const [newValueValue, setNewValueValue] = useState('')
 
   useEffect(() => {
-    if (mode === 'edit' && projectId) {
-      const project = getProject(projectId)
-      if (project) {
-        setFormData({
-          title: project.title,
-          description: project.description,
-          longDescription: project.longDescription || '',
-          image: project.image,
-          images: project.images || [],
-          category: project.category,
-          tags: project.tags,
-          technologies: project.technologies,
-          year: project.year,
-          client: project.client || '',
-          role: project.role,
-          duration: project.duration || '',
-          status: project.status,
-          featured: project.featured,
-          order: project.order,
-          liveUrl: project.liveUrl || '',
-          githubUrl: project.githubUrl || '',
-          behanceUrl: project.behanceUrl || '',
-          websiteEmbed: project.websiteEmbed || '',
-          caseStudy: project.caseStudy || {
-            challenge: '',
-            solution: '',
-            process: [''],
-            results: [''],
-          },
-        })
+    const loadProject = async () => {
+      if (mode === 'edit' && projectId) {
+        const project = await getProject(projectId)
+        if (project) {
+          setFormData({
+            title: project.title,
+            description: project.description,
+            image: project.image,
+            images: project.images || [],
+            category: project.category,
+            tags: project.tags,
+            technologies: project.technologies,
+            year: project.year,
+            client: project.client || '',
+            role: project.role,
+            duration: project.duration || '',
+            status: project.status,
+            featured: project.featured,
+            order: project.order,
+            liveUrl: project.liveUrl || '',
+            githubUrl: project.githubUrl || '',
+            behanceUrl: project.behanceUrl || '',
+            websiteEmbed: project.websiteEmbed || '',
+            challenge: project.challenge || '',
+            approachBullets: project.approachBullets || [],
+            valueDelivered: project.valueDelivered || [],
+            testimonial: project.testimonial,
+            relevanceNote: project.relevanceNote || '',
+          })
+        }
       }
     }
+
+    loadProject()
   }, [mode, projectId])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,20 +106,15 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
     try {
       let result
       if (mode === 'create') {
-        console.log('Creating project with data:', formData)
-        result = createProject(formData)
-        console.log('Project created:', result)
+        result = await createProject(formData)
       } else if (projectId) {
-        console.log('Updating project:', projectId, 'with data:', formData)
-        result = updateProject(projectId, formData)
-        console.log('Project updated:', result)
+        result = await updateProject(projectId, formData)
       }
 
       if (result) {
-        console.log('Project saved successfully, redirecting to admin...')
         router.push('/admin')
       } else {
-        throw new Error('Failed to save project - no result returned')
+        throw new Error('Failed to save project')
       }
     } catch (error) {
       console.error('Error saving project:', error)
@@ -162,544 +158,588 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
     }))
   }
 
-  const addProcessStep = () => {
-    if (newProcessStep.trim()) {
+  const addApproachBullet = () => {
+    if (newApproachBullet.trim()) {
       setFormData(prev => ({
         ...prev,
-        caseStudy: {
-          ...prev.caseStudy!,
-          process: [...prev.caseStudy!.process, newProcessStep.trim()]
-        }
+        approachBullets: [...(prev.approachBullets || []), newApproachBullet.trim()]
       }))
-      setNewProcessStep('')
+      setNewApproachBullet('')
     }
   }
 
-  const removeProcessStep = (index: number) => {
+  const removeApproachBullet = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      caseStudy: {
-        ...prev.caseStudy!,
-        process: prev.caseStudy!.process.filter((_, i) => i !== index)
-      }
+      approachBullets: prev.approachBullets?.filter((_, i) => i !== index) || []
     }))
   }
 
-  const addResult = () => {
-    if (newResult.trim()) {
+  const addValueDelivered = () => {
+    if (newValueLabel.trim() && newValueValue.trim()) {
       setFormData(prev => ({
         ...prev,
-        caseStudy: {
-          ...prev.caseStudy!,
-          results: [...prev.caseStudy!.results, newResult.trim()]
-        }
+        valueDelivered: [...(prev.valueDelivered || []), {
+          label: newValueLabel.trim(),
+          value: newValueValue.trim()
+        }]
       }))
-      setNewResult('')
+      setNewValueLabel('')
+      setNewValueValue('')
     }
   }
 
-  const removeResult = (index: number) => {
+  const removeValueDelivered = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      caseStudy: {
-        ...prev.caseStudy!,
-        results: prev.caseStudy!.results.filter((_, i) => i !== index)
-      }
+      valueDelivered: prev.valueDelivered?.filter((_, i) => i !== index) || []
     }))
   }
 
   return (
-    <div className="min-h-screen pt-20">
-      <div className="container max-w-4xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="mb-8">
-            <h1 className="h1 mb-4">
-              {mode === 'create' ? 'Create New Project' : 'Edit Project'}
-            </h1>
-            <p className="text-text-secondary">
-              {mode === 'create' 
-                ? 'Add a new project to your portfolio' 
-                : 'Update project information'
-              }
-            </p>
+    <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto p-6">
+      <div className="bg-background border border-secondary rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-6 text-primary">Project Snapshot</h2>
+        <p className="text-text-secondary mb-6">Basic information about the project</p>
+
+        {/* Title */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium mb-2">
+            Project Title *
+          </label>
+          <input
+            type="text"
+            required
+            value={formData.title}
+            onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+            className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            placeholder="e.g., Flow"
+          />
+        </div>
+
+        {/* Description */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium mb-2">
+            Short Description *
+          </label>
+          <textarea
+            required
+            value={formData.description}
+            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+            className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            rows={3}
+            placeholder="A modern productivity app that helps teams stay focused and ship faster"
+          />
+          <p className="text-sm text-text-secondary mt-1">Keep it under 2 sentences, plain language</p>
+        </div>
+
+        {/* Meta Information Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Client */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Client/Brand
+            </label>
+            <input
+              type="text"
+              value={formData.client || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, client: e.target.value }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              placeholder="e.g., FlowHQ"
+            />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Basic Information */}
-            <div className="bg-background border border-secondary rounded-lg p-6">
-              <h2 className="text-xl font-medium mb-6">Basic Information</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Project Title *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.title}
-                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Type *
+            </label>
+            <select
+              required
+              value={formData.category}
+              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as Category }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            >
+              {categories.map(cat => (
+                <option key={cat.value} value={cat.value}>{cat.label}</option>
+              ))}
+            </select>
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Category *
-                  </label>
-                  <select
-                    required
-                    value={formData.category}
-                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as Category }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    {categories.map((category) => (
-                      <option key={category.value} value={category.value}>
-                        {category.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+          {/* Year */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Timeline (Year) *
+            </label>
+            <input
+              type="number"
+              required
+              value={formData.year}
+              onChange={(e) => setFormData(prev => ({ ...prev, year: parseInt(e.target.value) }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              placeholder="2025"
+            />
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Year *
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    value={formData.year}
-                    onChange={(e) => setFormData(prev => ({ ...prev, year: parseInt(e.target.value) }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
+          {/* Duration */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Duration
+            </label>
+            <input
+              type="text"
+              value={formData.duration || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              placeholder="e.g., 4 months"
+            />
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Status *
-                  </label>
-                  <select
-                    required
-                    value={formData.status}
-                    onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as Status }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    {statuses.map((status) => (
-                      <option key={status.value} value={status.value}>
-                        {status.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+          {/* Role */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Your Role *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.role}
+              onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              placeholder="e.g., Lead Product Designer"
+            />
+          </div>
 
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-text mb-2">
-                  Short Description *
-                </label>
-                <textarea
-                  required
-                  rows={3}
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
+          {/* Status */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Status *
+            </label>
+            <select
+              required
+              value={formData.status}
+              onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as Status }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            >
+              {statuses.map(status => (
+                <option key={status.value} value={status.value}>{status.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-text mb-2">
-                  Long Description
-                </label>
-                <textarea
-                  rows={4}
-                  value={formData.longDescription}
-                  onChange={(e) => setFormData(prev => ({ ...prev, longDescription: e.target.value }))}
-                  className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
+        {/* Featured & Order */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              checked={formData.featured}
+              onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
+              className="w-4 h-4 text-primary border-secondary rounded focus:ring-primary"
+            />
+            <label className="ml-2 text-sm font-medium">
+              Featured Project
+            </label>
+          </div>
 
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-text mb-2">
-                  Main Image *
-                </label>
-                <ImageUpload
-                  value={formData.image}
-                  onChange={(url) => setFormData(prev => ({ ...prev, image: url }))}
-                  placeholder="Enter image URL or upload file"
-                />
-              </div>
-            </div>
-
-            {/* Additional Images */}
-            <div className="bg-background border border-secondary rounded-lg p-6">
-              <h2 className="text-xl font-medium mb-6">Additional Images</h2>
-              <div>
-                <label className="block text-sm font-medium text-text mb-2">
-                  Gallery Images
-                </label>
-                <MultipleImageUpload
-                  value={formData.images || []}
-                  onChange={(images) => setFormData(prev => ({ ...prev, images }))}
-                  maxImages={10}
-                />
-              </div>
-            </div>
-
-            {/* Project Details */}
-            <div className="bg-background border border-secondary rounded-lg p-6">
-              <h2 className="text-xl font-medium mb-6">Project Details</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Client
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.client}
-                    onChange={(e) => setFormData(prev => ({ ...prev, client: e.target.value }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Your Role *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.role}
-                    onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Duration
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.duration}
-                    onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
-                    placeholder="e.g., 3 months"
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Order (for featured projects)
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.order}
-                    onChange={(e) => setFormData(prev => ({ ...prev, order: parseInt(e.target.value) || 0 }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6 flex items-center">
-                <input
-                  type="checkbox"
-                  id="featured"
-                  checked={formData.featured}
-                  onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
-                  className="mr-3"
-                />
-                <label htmlFor="featured" className="text-sm font-medium text-text">
-                  Featured Project
-                </label>
-              </div>
-            </div>
-
-            {/* Tags and Technologies */}
-            <div className="bg-background border border-secondary rounded-lg p-6">
-              <h2 className="text-xl font-medium mb-6">Tags & Technologies</h2>
-              
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Tags
-                  </label>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {formData.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-3 py-1 bg-secondary text-text-secondary text-sm rounded flex items-center gap-2"
-                      >
-                        {tag}
-                        <button
-                          type="button"
-                          onClick={() => removeTag(tag)}
-                          className="text-text-secondary hover:text-text"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newTag}
-                      onChange={(e) => setNewTag(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                      placeholder="Add a tag"
-                      className="flex-1 px-4 py-2 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    <button
-                      type="button"
-                      onClick={addTag}
-                      className="px-4 py-2 bg-secondary text-text-secondary rounded-lg hover:bg-text/10 transition-colors"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Technologies
-                  </label>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {formData.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-3 py-1 bg-secondary text-text-secondary text-sm rounded flex items-center gap-2"
-                      >
-                        {tech}
-                        <button
-                          type="button"
-                          onClick={() => removeTechnology(tech)}
-                          className="text-text-secondary hover:text-text"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newTech}
-                      onChange={(e) => setNewTech(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTechnology())}
-                      placeholder="Add a technology"
-                      className="flex-1 px-4 py-2 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    <button
-                      type="button"
-                      onClick={addTechnology}
-                      className="px-4 py-2 bg-secondary text-text-secondary rounded-lg hover:bg-text/10 transition-colors"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Links */}
-            <div className="bg-background border border-secondary rounded-lg p-6">
-              <h2 className="text-xl font-medium mb-6">Links</h2>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Website Embed URL
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.websiteEmbed}
-                    onChange={(e) => setFormData(prev => ({ ...prev, websiteEmbed: e.target.value }))}
-                    placeholder="https://example.com (for iframe embedding)"
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  <p className="text-sm text-text-secondary mt-1">
-                    URL for live website preview embedding
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Live URL
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.liveUrl}
-                    onChange={(e) => setFormData(prev => ({ ...prev, liveUrl: e.target.value }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    GitHub URL
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.githubUrl}
-                    onChange={(e) => setFormData(prev => ({ ...prev, githubUrl: e.target.value }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Behance URL
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.behanceUrl}
-                    onChange={(e) => setFormData(prev => ({ ...prev, behanceUrl: e.target.value }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Case Study */}
-            <div className="bg-background border border-secondary rounded-lg p-6">
-              <h2 className="text-xl font-medium mb-6">Case Study</h2>
-              
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Challenge
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={formData.caseStudy?.challenge || ''}
-                    onChange={(e) => setFormData(prev => ({
-                      ...prev,
-                      caseStudy: { ...prev.caseStudy!, challenge: e.target.value }
-                    }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Solution
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={formData.caseStudy?.solution || ''}
-                    onChange={(e) => setFormData(prev => ({
-                      ...prev,
-                      caseStudy: { ...prev.caseStudy!, solution: e.target.value }
-                    }))}
-                    className="w-full px-4 py-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Process Steps
-                  </label>
-                  <div className="space-y-2 mb-3">
-                    {formData.caseStudy?.process.map((step, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <span className="w-6 h-6 bg-primary text-background rounded-full flex items-center justify-center text-sm font-medium">
-                          {index + 1}
-                        </span>
-                        <span className="flex-1 text-text-secondary">{step}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeProcessStep(index)}
-                          className="text-text-secondary hover:text-text"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newProcessStep}
-                      onChange={(e) => setNewProcessStep(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addProcessStep())}
-                      placeholder="Add a process step"
-                      className="flex-1 px-4 py-2 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    <button
-                      type="button"
-                      onClick={addProcessStep}
-                      className="px-4 py-2 bg-secondary text-text-secondary rounded-lg hover:bg-text/10 transition-colors"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text mb-2">
-                    Results
-                  </label>
-                  <div className="space-y-2 mb-3">
-                    {formData.caseStudy?.results.map((result, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <span className="w-2 h-2 bg-primary rounded-full"></span>
-                        <span className="flex-1 text-text-secondary">{result}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeResult(index)}
-                          className="text-text-secondary hover:text-text"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newResult}
-                      onChange={(e) => setNewResult(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addResult())}
-                      placeholder="Add a result"
-                      className="flex-1 px-4 py-2 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    <button
-                      type="button"
-                      onClick={addResult}
-                      className="px-4 py-2 bg-secondary text-text-secondary rounded-lg hover:bg-text/10 transition-colors"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Submit Buttons */}
-            <div className="flex items-center gap-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-8 py-3 bg-text text-background rounded-lg hover:bg-text/90 transition-colors disabled:opacity-50"
-              >
-                {loading ? 'Saving...' : mode === 'create' ? 'Create Project' : 'Update Project'}
-              </button>
-              <button
-                type="button"
-                onClick={() => router.push('/admin')}
-                className="px-8 py-3 border border-text text-text rounded-lg hover:bg-text hover:text-background transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </motion.div>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Display Order
+            </label>
+            <input
+              type="number"
+              value={formData.order}
+              onChange={(e) => setFormData(prev => ({ ...prev, order: parseInt(e.target.value) }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              placeholder="0"
+            />
+          </div>
+        </div>
       </div>
-    </div>
+
+      {/* Images */}
+      <div className="bg-background border border-secondary rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-6 text-primary">Visual Showcase</h2>
+
+        {/* Hero Image */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium mb-2">
+            Hero Image *
+          </label>
+          <ImageUpload
+            value={formData.image}
+            onChange={(url) => setFormData(prev => ({ ...prev, image: url }))}
+            label="Upload Hero Image"
+          />
+        </div>
+
+        {/* Gallery Images */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Gallery Images
+          </label>
+          <MultipleImageUpload
+            value={formData.images || []}
+            onChange={(urls) => setFormData(prev => ({ ...prev, images: urls }))}
+          />
+        </div>
+      </div>
+
+      {/* The Challenge */}
+      <div className="bg-background border border-secondary rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4 text-primary">The Challenge</h2>
+        <p className="text-text-secondary mb-6">One simple sentence that anyone can understand</p>
+
+        <textarea
+          value={formData.challenge || ''}
+          onChange={(e) => setFormData(prev => ({ ...prev, challenge: e.target.value }))}
+          className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+          rows={3}
+          placeholder="They needed a tool that felt effortless to use, without the clutter and learning curve of traditional project management software."
+        />
+        <p className="text-sm text-text-secondary mt-1">✨ Keep it plain language - no jargon!</p>
+      </div>
+
+      {/* Approach */}
+      <div className="bg-background border border-secondary rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4 text-primary">Approach</h2>
+        <p className="text-text-secondary mb-6">2-3 key moves you made (plain language, not jargon)</p>
+
+        {/* List of bullets */}
+        {formData.approachBullets && formData.approachBullets.length > 0 && (
+          <div className="space-y-2 mb-4">
+            {formData.approachBullets.map((bullet, index) => (
+              <div key={index} className="flex items-center gap-2 p-3 bg-secondary/10 rounded-lg">
+                <span className="flex-1">{bullet}</span>
+                <button
+                  type="button"
+                  onClick={() => removeApproachBullet(index)}
+                  className="text-red-500 hover:text-red-700 px-2 py-1"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Add new bullet */}
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newApproachBullet}
+            onChange={(e) => setNewApproachBullet(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addApproachBullet())}
+            className="flex-1 px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            placeholder="e.g., Designed an ultra-minimal interface that puts tasks front and center"
+          />
+          <button
+            type="button"
+            onClick={addApproachBullet}
+            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
+      {/* Value Delivered */}
+      <div className="bg-background border border-secondary rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4 text-primary">Value Delivered</h2>
+        <p className="text-text-secondary mb-6">Talk outcomes, not deliverables</p>
+
+        {/* List of values */}
+        {formData.valueDelivered && formData.valueDelivered.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            {formData.valueDelivered.map((item, index) => (
+              <div key={index} className="p-4 bg-secondary/10 rounded-lg text-center relative">
+                <div className="text-3xl font-bold text-primary mb-2">{item.value}</div>
+                <div className="text-sm">{item.label}</div>
+                <button
+                  type="button"
+                  onClick={() => removeValueDelivered(index)}
+                  className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Add new value */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Value/Metric</label>
+            <input
+              type="text"
+              value={newValueValue}
+              onChange={(e) => setNewValueValue(e.target.value)}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              placeholder="e.g., 3x, 40%, 4.9/5"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Label</label>
+            <input
+              type="text"
+              value={newValueLabel}
+              onChange={(e) => setNewValueLabel(e.target.value)}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              placeholder="e.g., Faster task completion"
+            />
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={addValueDelivered}
+          className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+        >
+          Add Value Metric
+        </button>
+      </div>
+
+      {/* Client Perspective */}
+      <div className="bg-background border border-secondary rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4 text-primary">Client Perspective</h2>
+        <p className="text-text-secondary mb-6">Short authentic feedback (optional)</p>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Quote</label>
+            <textarea
+              value={formData.testimonial?.quote || ''}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                testimonial: {
+                  quote: e.target.value,
+                  author: prev.testimonial?.author || '',
+                  role: prev.testimonial?.role || '',
+                }
+              }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              rows={3}
+              placeholder="Flow feels like magic. It's the first productivity tool that actually makes us more productive instead of just tracking our work."
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Author Name</label>
+              <input
+                type="text"
+                value={formData.testimonial?.author || ''}
+                onChange={(e) => setFormData(prev => ({
+                  ...prev,
+                  testimonial: {
+                    quote: prev.testimonial?.quote || '',
+                    author: e.target.value,
+                    role: prev.testimonial?.role || '',
+                  }
+                }))}
+                className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+                placeholder="Sarah Chen"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Role/Title</label>
+              <input
+                type="text"
+                value={formData.testimonial?.role || ''}
+                onChange={(e) => setFormData(prev => ({
+                  ...prev,
+                  testimonial: {
+                    quote: prev.testimonial?.quote || '',
+                    author: prev.testimonial?.author || '',
+                    role: e.target.value,
+                  }
+                }))}
+                className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+                placeholder="Product Lead at FlowHQ"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Relevance Note */}
+      <div className="bg-background border border-secondary rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4 text-primary">Relevance / Personal Connection</h2>
+        <p className="text-text-secondary mb-6">Connect this project to future clients</p>
+
+        <textarea
+          value={formData.relevanceNote || ''}
+          onChange={(e) => setFormData(prev => ({ ...prev, relevanceNote: e.target.value }))}
+          className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+          rows={3}
+          placeholder="I love building tools that get out of your way and help you do your best work. If you're looking to create software that people actually enjoy using, let's talk."
+        />
+      </div>
+
+      {/* Tech Stack */}
+      <div className="bg-background border border-secondary rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4 text-primary">Tech Stack</h2>
+
+        {/* List of technologies */}
+        {formData.technologies.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {formData.technologies.map((tech, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 bg-secondary/20 text-text rounded-lg flex items-center gap-2"
+              >
+                {tech}
+                <button
+                  type="button"
+                  onClick={() => removeTechnology(tech)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Add new technology */}
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newTech}
+            onChange={(e) => setNewTech(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTechnology())}
+            className="flex-1 px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            placeholder="e.g., React, TypeScript, Node.js"
+          />
+          <button
+            type="button"
+            onClick={addTechnology}
+            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
+      {/* Tags */}
+      <div className="bg-background border border-secondary rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4 text-primary">Tags</h2>
+
+        {/* List of tags */}
+        {formData.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {formData.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 bg-primary/10 text-primary rounded-lg flex items-center gap-2"
+              >
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => removeTag(tag)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Add new tag */}
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newTag}
+            onChange={(e) => setNewTag(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+            className="flex-1 px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            placeholder="e.g., Productivity, SaaS, Collaboration"
+          />
+          <button
+            type="button"
+            onClick={addTag}
+            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
+      {/* Links */}
+      <div className="bg-background border border-secondary rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4 text-primary">Links</h2>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Live URL</label>
+            <input
+              type="url"
+              value={formData.liveUrl || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, liveUrl: e.target.value }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              placeholder="https://example.com"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">GitHub URL</label>
+            <input
+              type="url"
+              value={formData.githubUrl || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, githubUrl: e.target.value }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              placeholder="https://github.com/..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Behance URL</label>
+            <input
+              type="url"
+              value={formData.behanceUrl || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, behanceUrl: e.target.value }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              placeholder="https://behance.net/..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Website Embed URL</label>
+            <input
+              type="url"
+              value={formData.websiteEmbed || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, websiteEmbed: e.target.value }))}
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+              placeholder="https://example.com (for iframe)"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Submit Button */}
+      <div className="flex gap-4">
+        <motion.button
+          type="submit"
+          disabled={loading}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex-1 px-8 py-4 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
+        >
+          {loading ? 'Saving...' : mode === 'create' ? 'Create Project' : 'Update Project'}
+        </motion.button>
+
+        <motion.button
+          type="button"
+          onClick={() => router.push('/admin')}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="px-8 py-4 border border-secondary text-text rounded-lg hover:bg-secondary/10"
+        >
+          Cancel
+        </motion.button>
+      </div>
+    </form>
   )
 }

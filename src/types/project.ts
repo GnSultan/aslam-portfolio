@@ -5,7 +5,6 @@ export interface Project {
   id: string;
   title: string;
   description: string;
-  longDescription?: string;
   image: string;
   images?: string[];
   category: Category;
@@ -23,33 +22,29 @@ export interface Project {
   behanceUrl?: string;
   websiteEmbed?: string;
 
-  // Modern content structure
-  overview?: string;
-  keyFeatures?: string[];
-  impact?: {
-    metrics?: Array<{
-      label: string;
-      value: string;
-      description?: string;
-    }>;
-    achievements?: string[];
-  };
-  approach?: {
-    methodology?: string;
-    keyDecisions?: Array<{
-      decision: string;
-      rationale: string;
-    }>;
-  };
-  learnings?: string[];
+  // Modern Client-Friendly Content Structure
+  // 🔥 The Challenge - One simple sentence that anyone can understand
+  challenge?: string;
 
-  // Legacy case study (for backward compatibility)
-  caseStudy?: {
-    challenge: string;
-    solution: string;
-    process: string[];
-    results: string[];
+  // 🔥 Approach - 2-3 key moves (not jargon, plain language)
+  approachBullets?: string[];
+
+  // 🔥 Value Delivered - Talk outcomes, not deliverables
+  valueDelivered?: Array<{
+    label: string;
+    value: string;
+  }>;
+
+  // 🔥 Client Perspective - Short authentic feedback
+  testimonial?: {
+    quote: string;
+    author: string;
+    role?: string;
   };
+
+  // 🔥 Relevance Note - Personal connection to the work
+  relevanceNote?: string;
+
   createdAt: string;
   updatedAt: string;
 }
@@ -57,7 +52,6 @@ export interface Project {
 export interface ProjectFormData {
   title: string;
   description: string;
-  longDescription?: string;
   image: string;
   images?: string[];
   category: Category;
@@ -74,12 +68,18 @@ export interface ProjectFormData {
   githubUrl?: string;
   behanceUrl?: string;
   websiteEmbed?: string;
-  caseStudy?: {
-    challenge: string;
-    solution: string;
-    process: string[];
-    results: string[];
+  challenge?: string;
+  approachBullets?: string[];
+  valueDelivered?: Array<{
+    label: string;
+    value: string;
+  }>;
+  testimonial?: {
+    quote: string;
+    author: string;
+    role?: string;
   };
+  relevanceNote?: string;
 }
 
 export interface ProjectFilters {

@@ -1,263 +1,309 @@
 import { Project, ProjectFormData } from '@/types/project';
+import { supabase } from './supabase';
 
-// In a real app, this would be replaced with API calls or database operations
-// For now, we'll use localStorage for persistence
+// Database field mapping (snake_case in DB, camelCase in code)
+const mapDbToProject = (dbRow: any): Project => {
+  return {
+    id: dbRow.id,
+    title: dbRow.title,
+    description: dbRow.description,
+    image: dbRow.image,
+    images: dbRow.images || [],
+    category: dbRow.category,
+    tags: dbRow.tags || [],
+    technologies: dbRow.technologies || [],
+    year: dbRow.year,
+    client: dbRow.client,
+    role: dbRow.role,
+    duration: dbRow.duration,
+    status: dbRow.status,
+    featured: dbRow.featured,
+    order: dbRow.order,
+    liveUrl: dbRow.live_url,
+    githubUrl: dbRow.github_url,
+    behanceUrl: dbRow.behance_url,
+    websiteEmbed: dbRow.website_embed,
+    challenge: dbRow.challenge,
+    approachBullets: dbRow.approach_bullets || [],
+    valueDelivered: dbRow.value_delivered || [],
+    testimonial: dbRow.testimonial,
+    relevanceNote: dbRow.relevance_note,
+    createdAt: dbRow.created_at,
+    updatedAt: dbRow.updated_at,
+  };
+};
 
-const STORAGE_KEY = 'portfolio_projects';
+const mapProjectToDb = (project: Partial<ProjectFormData>) => {
+  return {
+    title: project.title,
+    description: project.description,
+    image: project.image,
+    images: project.images,
+    category: project.category,
+    tags: project.tags,
+    technologies: project.technologies,
+    year: project.year,
+    client: project.client,
+    role: project.role,
+    duration: project.duration,
+    status: project.status,
+    featured: project.featured,
+    order: project.order,
+    live_url: project.liveUrl,
+    github_url: project.githubUrl,
+    behance_url: project.behanceUrl,
+    website_embed: project.websiteEmbed,
+    challenge: project.challenge,
+    approach_bullets: project.approachBullets,
+    value_delivered: project.valueDelivered,
+    testimonial: project.testimonial,
+    relevance_note: project.relevanceNote,
+  };
+};
 
-export const getProjects = (): Project[] => {
-  if (typeof window === 'undefined') return [];
+export const getProjects = async (): Promise<Project[]> => {
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .order('order', { ascending: true });
 
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      // Ensure we have valid project array
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    }
-  } catch (error) {
-    console.error('Error loading projects from localStorage:', error);
-    // Try to backup corrupted data before clearing
-    const corrupted = localStorage.getItem(STORAGE_KEY);
-    if (corrupted) {
-      localStorage.setItem(`${STORAGE_KEY}_corrupted_${Date.now()}`, corrupted);
-    }
+  if (error) {
+    console.error('Error fetching projects:', error);
+    return getDefaultProjects();
   }
 
-  // Only initialize with default projects if no valid data exists
-  // Check if this is the first time initialization
-  const hasBeenInitialized = localStorage.getItem(`${STORAGE_KEY}_initialized`);
-  if (!hasBeenInitialized) {
-    const defaultProjects = getDefaultProjects();
-    saveProjects(defaultProjects);
-    localStorage.setItem(`${STORAGE_KEY}_initialized`, 'true');
-    return defaultProjects;
+  if (!data || data.length === 0) {
+    return getDefaultProjects();
   }
 
-  // If we've been initialized before but have no data, return empty array
-  // This prevents losing custom projects when localStorage is temporarily unavailable
-  return [];
+  return data.map(mapDbToProject);
 };
 
-export const getProject = (id: string): Project | null => {
-  const projects = getProjects();
-  return projects.find(project => project.id === id) || null;
+export const getProject = async (id: string): Promise<Project | null> => {
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching project:', error);
+    return null;
+  }
+
+  return data ? mapDbToProject(data) : null;
 };
 
-export const createProject = (projectData: ProjectFormData): Project => {
-  const projects = getProjects();
-  const newProject: Project = {
-    ...projectData,
-    id: generateId(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+export const createProject = async (projectData: ProjectFormData): Promise<Project> => {
+  const id = generateId();
+  const dbData = {
+    id,
+    ...mapProjectToDb(projectData),
   };
-  
-  const updatedProjects = [...projects, newProject];
-  saveProjects(updatedProjects);
-  return newProject;
+
+  const { data, error } = await supabase
+    .from('projects')
+    .insert(dbData)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating project:', error);
+    throw new Error('Failed to create project');
+  }
+
+  return mapDbToProject(data);
 };
 
-export const updateProject = (id: string, projectData: Partial<ProjectFormData>): Project | null => {
-  const projects = getProjects();
-  const projectIndex = projects.findIndex(project => project.id === id);
-  
-  if (projectIndex === -1) return null;
-  
-  const updatedProject: Project = {
-    ...projects[projectIndex],
-    ...projectData,
-    updatedAt: new Date().toISOString(),
-  };
-  
-  const updatedProjects = [...projects];
-  updatedProjects[projectIndex] = updatedProject;
-  saveProjects(updatedProjects);
-  return updatedProject;
+export const updateProject = async (id: string, projectData: Partial<ProjectFormData>): Promise<Project | null> => {
+  const dbData = mapProjectToDb(projectData);
+
+  const { data, error } = await supabase
+    .from('projects')
+    .update(dbData)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating project:', error);
+    throw new Error('Failed to update project');
+  }
+
+  return data ? mapDbToProject(data) : null;
 };
 
-export const deleteProject = (id: string): boolean => {
-  const projects = getProjects();
-  const filteredProjects = projects.filter(project => project.id !== id);
-  
-  if (filteredProjects.length === projects.length) return false;
-  
-  saveProjects(filteredProjects);
+export const deleteProject = async (id: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from('projects')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting project:', error);
+    return false;
+  }
+
   return true;
 };
 
-export const getFeaturedProjects = (): Project[] => {
-  const projects = getProjects();
-  return projects
-    .filter(project => project.featured)
-    .sort((a, b) => a.order - b.order);
-};
+export const getFeaturedProjects = async (): Promise<Project[]> => {
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('featured', true)
+    .order('order', { ascending: true });
 
-export const getProjectsByCategory = (category: string): Project[] => {
-  const projects = getProjects();
-  return projects.filter(project => project.category === category);
-};
-
-// Debug functions for troubleshooting
-export const resetToDefaults = (): Project[] => {
-  if (typeof window === 'undefined') return [];
-
-  console.warn('Resetting projects to default values - all custom projects will be lost!');
-
-  // Clear all related localStorage keys
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(`${STORAGE_KEY}_initialized`);
-  localStorage.removeItem(`${STORAGE_KEY}_backup`);
-
-  // Get fresh default projects
-  const defaults = getDefaultProjects();
-  saveProjects(defaults);
-  localStorage.setItem(`${STORAGE_KEY}_initialized`, 'true');
-
-  return defaults;
-};
-
-export const getStorageInfo = () => {
-  if (typeof window === 'undefined') return null;
-
-  return {
-    hasProjects: !!localStorage.getItem(STORAGE_KEY),
-    hasBackup: !!localStorage.getItem(`${STORAGE_KEY}_backup`),
-    hasInitFlag: !!localStorage.getItem(`${STORAGE_KEY}_initialized`),
-    projectsData: localStorage.getItem(STORAGE_KEY),
-    backupData: localStorage.getItem(`${STORAGE_KEY}_backup`),
-  };
-};
-
-const saveProjects = (projects: Project[]): void => {
-  if (typeof window === 'undefined') return;
-
-  try {
-    // Validate input
-    if (!Array.isArray(projects)) {
-      throw new Error('Projects must be an array');
-    }
-
-    // Create backup of current data before overwriting
-    const current = localStorage.getItem(STORAGE_KEY);
-    if (current) {
-      localStorage.setItem(`${STORAGE_KEY}_backup`, current);
-    }
-
-    const serialized = JSON.stringify(projects);
-    localStorage.setItem(STORAGE_KEY, serialized);
-
-    // Verify the save worked by immediately reading it back
-    const verification = localStorage.getItem(STORAGE_KEY);
-    if (verification !== serialized) {
-      throw new Error('Save verification failed');
-    }
-
-    console.log(`Successfully saved ${projects.length} projects to localStorage`);
-  } catch (error) {
-    console.error('Error saving projects:', error);
-
-    // Try to restore from backup if save failed
-    const backup = localStorage.getItem(`${STORAGE_KEY}_backup`);
-    if (backup) {
-      try {
-        localStorage.setItem(STORAGE_KEY, backup);
-        console.log('Restored from backup after failed save');
-      } catch (restoreError) {
-        console.error('Failed to restore backup:', restoreError);
-      }
-    }
-
-    throw error; // Re-throw so caller knows save failed
+  if (error) {
+    console.error('Error fetching featured projects:', error);
+    return [];
   }
+
+  return data ? data.map(mapDbToProject) : [];
+};
+
+export const getProjectsByCategory = async (category: string): Promise<Project[]> => {
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('category', category)
+    .order('year', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching projects by category:', error);
+    return [];
+  }
+
+  return data ? data.map(mapDbToProject) : [];
 };
 
 const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
 
+// Default projects as fallback
 const getDefaultProjects = (): Project[] => {
   return [
     {
       id: '1',
-      title: 'Rejuvenate',
-      description: 'Mental health platform',
-      longDescription: 'A comprehensive mental health platform designed to provide accessible therapy and wellness tools for users worldwide.',
-      image: '/placeholders/rejuvenate-mockup.jpg',
-      images: ['/placeholders/rejuvenate-mockup.jpg'],
+      title: 'Flow',
+      description: 'A modern productivity app that helps teams stay focused and ship faster',
+      image: '/project-one.jpg',
+      images: [
+        '/project-one.jpg',
+        '/Modern%20Interior%20Design.png',
+        '/Minimalist%20Sphere%20Display.png',
+        '/Minimalist%20Bathroom%20Scene.png',
+      ],
       category: 'web',
-      tags: ['Mental Health', 'Wellness', 'SaaS'],
-      technologies: ['React', 'Node.js', 'PostgreSQL', 'Figma'],
-      year: 2024,
-      client: 'Rejuvenate Inc.',
-      role: 'Lead UI/UX Designer',
-      duration: '6 months',
+      tags: ['Productivity', 'SaaS', 'Collaboration'],
+      technologies: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Tailwind CSS', 'Framer Motion'],
+      year: 2025,
+      client: 'FlowHQ',
+      role: 'Lead Product Designer',
+      duration: '4 months',
       status: 'completed',
       featured: true,
       order: 1,
-      liveUrl: 'https://rejuvenate.app',
-      caseStudy: {
-        challenge: 'Creating an accessible and trustworthy platform for mental health services.',
-        solution: 'Designed a calming, intuitive interface with clear navigation and privacy-focused features.',
-        process: ['Research & Discovery', 'User Journey Mapping', 'Wireframing', 'Prototyping', 'User Testing'],
-        results: ['40% increase in user engagement', '95% user satisfaction score', '50% reduction in bounce rate']
+      challenge: 'They needed a tool that felt effortless to use, without the clutter and learning curve of traditional project management software.',
+      approachBullets: [
+        'Designed an ultra-minimal interface that puts tasks front and center',
+        'Built smart automation that learns team patterns and reduces busy work',
+        'Created fluid animations that make the app feel alive and responsive',
+      ],
+      valueDelivered: [
+        { label: 'Faster task completion', value: '3x' },
+        { label: 'Boost in team productivity', value: '40%' },
+        { label: 'User satisfaction rating', value: '4.9/5' },
+      ],
+      testimonial: {
+        quote: "Flow feels like magic. It's the first productivity tool that actually makes us more productive instead of just tracking our work.",
+        author: 'Sarah Chen',
+        role: 'Product Lead at FlowHQ',
       },
+      relevanceNote: "I love building tools that get out of your way and help you do your best work. If you're looking to create software that people actually enjoy using, let's talk.",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
     {
       id: '2',
-      title: 'Job Portal',
-      description: 'Modern job search platform',
-      longDescription: 'A modern job search platform that connects talented professionals with innovative companies.',
-      image: '/placeholders/job-portal-mockup.jpg',
-      images: ['/placeholders/job-portal-mockup.jpg'],
-      category: 'web',
-      tags: ['Job Search', 'Recruitment', 'Platform'],
-      technologies: ['Next.js', 'TypeScript', 'MongoDB', 'Tailwind CSS'],
-      year: 2024,
-      client: 'TechJobs Ltd.',
-      role: 'Product Designer',
-      duration: '4 months',
+      title: 'Bloom',
+      description: 'A wellness platform that makes mental health support accessible and approachable for everyone',
+      image: '/project-two.jpg',
+      images: [
+        '/project-two.jpg',
+        '/Contemplative%20Portrait.png',
+        '/Cozy%20Nightstand%20Setup.png',
+        '/Man%20in%20Warm%20Office.png',
+      ],
+      category: 'mobile',
+      tags: ['Health', 'Wellness', 'Mobile App'],
+      technologies: ['React Native', 'Firebase', 'Node.js', 'Stripe', 'Figma'],
+      year: 2025,
+      client: 'Bloom Health',
+      role: 'Product Designer & Strategist',
+      duration: '5 months',
       status: 'completed',
       featured: true,
       order: 2,
-      liveUrl: 'https://techjobs.com',
-      caseStudy: {
-        challenge: 'Simplifying the job search process for both candidates and employers.',
-        solution: 'Created an intuitive matching system with advanced filtering and real-time notifications.',
-        process: ['User Research', 'Competitive Analysis', 'Information Architecture', 'Visual Design', 'Prototyping'],
-        results: ['60% faster job matching', '35% increase in successful placements', '4.8/5 user rating']
+      challenge: 'Mental health apps often feel clinical and intimidating, making it hard for people to take the first step toward getting help.',
+      approachBullets: [
+        'Created warm, inviting visuals that feel like a supportive friend rather than a medical tool',
+        'Simplified the onboarding flow to get users to their first session in under 2 minutes',
+        'Designed privacy-first features that help users feel safe and in control',
+      ],
+      valueDelivered: [
+        { label: 'Increase in user signups', value: '65%' },
+        { label: 'Users completed first session', value: '85%' },
+        { label: 'Return for follow-ups', value: '72%' },
+      ],
+      testimonial: {
+        quote: "The design made me feel comfortable reaching out for help. It doesn't feel like therapy—it feels like self-care.",
+        author: 'Michael Torres',
+        role: 'Beta User',
       },
+      relevanceNote: "I'm passionate about designing experiences that break down barriers and make important services more human. If that resonates with you, I'd love to collaborate.",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
     {
       id: '3',
-      title: 'Desserts',
-      description: 'E-commerce for artisanal desserts',
-      longDescription: 'An elegant e-commerce platform for premium artisanal desserts with a focus on visual appeal and user experience.',
-      image: '/placeholders/desserts-mockup.jpg',
-      images: ['/placeholders/desserts-mockup.jpg'],
+      title: 'Spark',
+      description: 'An e-commerce platform that turns casual browsers into loyal customers through personalized shopping experiences',
+      image: '/project-three.jpg',
+      images: [
+        '/project-three.jpg',
+        '/Modern%20Lipstick%20Display.png',
+        '/Stylish%20Cap%20Close-Up.png',
+        '/Vintage%20Car%20with%20Duffel.png',
+      ],
       category: 'web',
-      tags: ['E-commerce', 'Food & Beverage', 'Artisanal'],
-      technologies: ['Shopify', 'Liquid', 'JavaScript', 'CSS'],
-      year: 2023,
-      client: 'Sweet Dreams Bakery',
-      role: 'Brand & Web Designer',
+      tags: ['E-commerce', 'Retail', 'Personalization'],
+      technologies: ['Next.js', 'Shopify', 'TypeScript', 'Tailwind CSS', 'Vercel'],
+      year: 2024,
+      client: 'Spark Retail',
+      role: 'UX Designer & Developer',
       duration: '3 months',
       status: 'completed',
       featured: true,
       order: 3,
-      liveUrl: 'https://sweetdreams.desserts',
-      caseStudy: {
-        challenge: 'Creating an appetizing online experience that drives sales for artisanal desserts.',
-        solution: 'Designed a mouth-watering interface with high-quality imagery and seamless checkout process.',
-        process: ['Brand Strategy', 'Visual Identity', 'E-commerce Design', 'Photography Direction', 'Launch'],
-        results: ['200% increase in online sales', '45% higher average order value', '90% customer retention rate']
+      challenge: 'Their online store had traffic but low conversion rates—people were browsing but not buying.',
+      approachBullets: [
+        'Redesigned the product pages to highlight benefits over features',
+        'Added smart recommendations that feel personal, not creepy',
+        'Streamlined checkout to remove friction and boost confidence',
+      ],
+      valueDelivered: [
+        { label: 'Jump in conversion rate', value: '2.3x' },
+        { label: 'Higher average order value', value: '+45%' },
+        { label: 'Reduction in cart abandonment', value: '38%' },
+      ],
+      testimonial: {
+        quote: 'Our customers love the new experience. Sales doubled within the first month, and the feedback has been incredible.',
+        author: 'Jessica Park',
+        role: 'Founder, Spark Retail',
       },
+      relevanceNote: "I specialize in turning good products into great experiences that drive real business results. If you're ready to grow, let's connect.",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },

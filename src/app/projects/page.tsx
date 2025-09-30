@@ -20,9 +20,9 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const loadProjects = () => {
+    const loadProjects = async () => {
       try {
-        const allProjects = getProjects()
+        const allProjects = await getProjects()
         setProjects(allProjects)
 
         // Group projects by year

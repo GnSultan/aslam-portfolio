@@ -46,31 +46,31 @@ export default function Gallery() {
 
   // Load dynamic images from projects (use project.images when available)
   useEffect(() => {
-    let projects = getProjects()
-    if (!projects || projects.length === 0) {
-      // force init defaults by calling once
-      projects = getProjects()
-    }
-    const images: GalleryImage[] = []
+    const loadProjects = async () => {
+      const projects = await getProjects()
+      const images: GalleryImage[] = []
 
-    projects.forEach(project => {
-      const sourceImages = Array.isArray(project.images) && project.images.length > 0
-        ? project.images
-        : (project.image ? [project.image] : [])
+      projects.forEach(project => {
+        const sourceImages = Array.isArray(project.images) && project.images.length > 0
+          ? project.images
+          : (project.image ? [project.image] : [])
 
-      sourceImages.forEach((img, index) => {
-        images.push({
-          id: `${project.id}-${index}`,
-          projectId: project.id,
-          imageIndex: index,
-          src: img,
-          alt: `${project.title} - ${index === 0 ? 'Cover' : 'Image ' + (index + 1)}`,
-          projectTitle: project.title,
+        sourceImages.forEach((img, index) => {
+          images.push({
+            id: `${project.id}-${index}`,
+            projectId: project.id,
+            imageIndex: index,
+            src: img,
+            alt: `${project.title} - ${index === 0 ? 'Cover' : 'Image ' + (index + 1)}`,
+            projectTitle: project.title,
+          })
         })
       })
-    })
 
-    setGalleryImages(images)
+      setGalleryImages(images)
+    }
+
+    loadProjects()
   }, [])
 
   // Truly infinite auto-scroll with modulo wrapping
@@ -297,7 +297,7 @@ export default function Gallery() {
                       priority={index < 4}
                       onError={(e) => {
                         console.error('Image failed to load:', image.src)
-                        e.currentTarget.src = '/placeholders/rejuvenate-mockup.jpg'
+                        e.currentTarget.src = '/portrait.jpg'
                       }}
                     />
                   </motion.div>

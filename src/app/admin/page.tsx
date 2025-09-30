@@ -11,9 +11,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const loadProjects = () => {
+    const loadProjects = async () => {
       try {
-        const allProjects = getProjects()
+        const allProjects = await getProjects()
         setProjects(allProjects)
       } catch (error) {
         console.error('Error loading projects:', error)
@@ -25,10 +25,10 @@ export default function AdminPage() {
     loadProjects()
   }, [])
 
-  const handleDeleteProject = (id: string) => {
+  const handleDeleteProject = async (id: string) => {
     if (confirm('Are you sure you want to delete this project?')) {
       try {
-        const success = deleteProject(id)
+        const success = await deleteProject(id)
         if (success) {
           setProjects(prev => prev.filter(project => project.id !== id))
         }
