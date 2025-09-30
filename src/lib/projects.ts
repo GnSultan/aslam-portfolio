@@ -183,18 +183,20 @@ const generateId = (): string => {
 };
 
 // Default projects as fallback
+const SUPABASE_URL = 'https://ampovegjevdjlsjgkxgn.supabase.co/storage/v1/object/public/portfolio-assets/portfolio'
+
 const getDefaultProjects = (): Project[] => {
   return [
     {
       id: '1',
       title: 'Flow',
       description: 'A modern productivity app that helps teams stay focused and ship faster',
-      image: '/project-one.jpg',
+      image: `${SUPABASE_URL}/Modern%20Interior%20Design.png`,
       images: [
-        '/project-one.jpg',
-        '/Modern%20Interior%20Design.png',
-        '/Minimalist%20Sphere%20Display.png',
-        '/Minimalist%20Bathroom%20Scene.png',
+        `${SUPABASE_URL}/Modern%20Interior%20Design.png`,
+        `${SUPABASE_URL}/Minimalist%20Sphere%20Display.png`,
+        `${SUPABASE_URL}/Minimalist%20Bathroom%20Scene.png`,
+        `${SUPABASE_URL}/Monochromatic%20Staircase%20Scene.png`,
       ],
       category: 'web',
       tags: ['Productivity', 'SaaS', 'Collaboration'],
@@ -230,12 +232,12 @@ const getDefaultProjects = (): Project[] => {
       id: '2',
       title: 'Bloom',
       description: 'A wellness platform that makes mental health support accessible and approachable for everyone',
-      image: '/project-two.jpg',
+      image: `${SUPABASE_URL}/Contemplative%20Portrait.png`,
       images: [
-        '/project-two.jpg',
-        '/Contemplative%20Portrait.png',
-        '/Cozy%20Nightstand%20Setup.png',
-        '/Man%20in%20Warm%20Office.png',
+        `${SUPABASE_URL}/Contemplative%20Portrait.png`,
+        `${SUPABASE_URL}/Cozy%20Nightstand%20Setup.png`,
+        `${SUPABASE_URL}/Man%20in%20Warm%20Office.png`,
+        `${SUPABASE_URL}/Contemplative%20Silhouette%20in%20Orange.png`,
       ],
       category: 'mobile',
       tags: ['Health', 'Wellness', 'Mobile App'],
@@ -271,12 +273,12 @@ const getDefaultProjects = (): Project[] => {
       id: '3',
       title: 'Spark',
       description: 'An e-commerce platform that turns casual browsers into loyal customers through personalized shopping experiences',
-      image: '/project-three.jpg',
+      image: `${SUPABASE_URL}/Modern%20Editorial%20Portrait.png`,
       images: [
-        '/project-three.jpg',
-        '/Modern%20Lipstick%20Display.png',
-        '/Stylish%20Cap%20Close-Up.png',
-        '/Vintage%20Car%20with%20Duffel.png',
+        `${SUPABASE_URL}/Modern%20Editorial%20Portrait.png`,
+        `${SUPABASE_URL}/Modern%20Lipstick%20Display.png`,
+        `${SUPABASE_URL}/Stylish%20Cap%20Close-Up.png`,
+        `${SUPABASE_URL}/Abstract%20Portrait.png`,
       ],
       category: 'web',
       tags: ['E-commerce', 'Retail', 'Personalization'],
