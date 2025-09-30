@@ -272,14 +272,6 @@ export default function Navigation() {
             >
               Contact
             </a>
-            <Link
-              href="/admin"
-              className="text-text/70 hover:text-primary transition-colors duration-300 link-hover focus:outline-none rounded px-2 py-1"
-              aria-label="Admin panel"
-              data-magnetic
-            >
-              Admin
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -373,13 +365,6 @@ export default function Navigation() {
                 >
                   Contact
                 </a>
-                <Link
-                  href="/admin"
-                  className="block px-4 py-2 text-text/70 hover:text-primary hover:bg-secondary/50 transition-colors duration-300 rounded-lg"
-                  aria-label="Admin panel"
-                >
-                  Admin
-                </Link>
               </div>
             </nav>
           </div>
