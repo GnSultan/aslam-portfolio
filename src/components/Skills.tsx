@@ -64,7 +64,7 @@ export default function Skills() {
               transition={{ duration: 0.6 }}
               className="lg:col-span-3"
             >
-            <p className="text-xl leading-relaxed text-text-secondary">
+            <p className="p content-text">
               I bring a range of expertise to every project, combining strategy, design, and development to deliver impact.
             </p>
           </motion.div>

@@ -26,7 +26,7 @@ export default function ProjectOverview({ overview, className = '' }: ProjectOve
 
           {/* Content with modern typography */}
           <div className="prose prose-lg max-w-none">
-            <p className="text-xl text-text leading-relaxed font-light">
+            <p className="p text-text">
               {overview}
             </p>
           </div>

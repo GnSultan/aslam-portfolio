@@ -44,7 +44,7 @@ export default function ProjectTestimonial({ testimonial, className = '' }: Proj
             </motion.div>
 
             {/* Quote text */}
-            <blockquote className="relative z-10 text-2xl md:text-3xl text-text leading-relaxed font-light mb-8 pl-6">
+            <blockquote className="relative z-10 p-large text-text mb-8 pl-6">
               {testimonial.quote}
             </blockquote>
 
@@ -58,9 +58,9 @@ export default function ProjectTestimonial({ testimonial, className = '' }: Proj
             >
               <div className="w-12 h-px bg-text/30" />
               <div>
-                <p className="text-lg font-medium text-text">{testimonial.author}</p>
+                <p className="p font-medium text-text">{testimonial.author}</p>
                 {testimonial.role && (
-                  <p className="text-sm text-text-secondary">{testimonial.role}</p>
+                  <p className="p-small text-text-secondary">{testimonial.role}</p>
                 )}
               </div>
             </motion.div>

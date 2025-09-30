@@ -45,7 +45,7 @@ export default function ProjectFeatures({ features, className = '' }: ProjectFea
 
                   {/* Feature content */}
                   <div className="pt-2">
-                    <p className="text-text leading-relaxed group-hover:text-text/90 transition-colors duration-300">
+                    <p className="p text-text group-hover:text-text/90 transition-colors duration-300">
                       {feature}
                     </p>
                   </div>

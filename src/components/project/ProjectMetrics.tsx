@@ -68,12 +68,12 @@ export default function ProjectMetrics({ metrics, achievements, className = '' }
                     {animatedValues[index] || metric.value}
                   </motion.div>
 
-                  <h3 className="text-lg font-medium text-text mb-2">
+                  <h3 className="p font-medium text-text mb-2">
                     {metric.label}
                   </h3>
 
                   {metric.description && (
-                    <p className="text-sm text-text-secondary leading-relaxed">
+                    <p className="p-small text-text-secondary">
                       {metric.description}
                     </p>
                   )}
@@ -117,7 +117,7 @@ export default function ProjectMetrics({ metrics, achievements, className = '' }
                       <div className="w-2 h-2 rounded-full bg-primary" />
                     </div>
 
-                    <p className="text-text-secondary leading-relaxed">
+                    <p className="p text-text-secondary">
                       {achievement}
                     </p>
                   </motion.div>

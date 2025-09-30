@@ -223,8 +223,8 @@ export default function FeaturedWork() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <h3 className="text-xl font-medium mb-1" data-text-hover>{project.title}</h3>
-                      <p className="text-sm text-text-secondary" data-text-hover>{project.description}</p>
+                      <h3 className="text-2xl font-semibold mb-2" data-text-hover>{project.title}</h3>
+                      <p className="text-body text-text-secondary" data-text-hover>{project.description}</p>
                     </div>
                     {project.liveUrl && (
                       <motion.div
@@ -285,7 +285,7 @@ export default function FeaturedWork() {
               data-cursor-text="Explore"
               className="w-full mt-8 p-4 text-text/70 hover:text-text transition-colors duration-300 text-left flex items-center gap-2 group"
             >
-              <span className="text-lg font-medium">Explore Work</span>
+              <span className="text-xl font-semibold">Explore Work</span>
               <svg 
                 className="w-4 h-4 transition-transform duration-300 rotate-0 group-hover:rotate-45" 
                 fill="none" 

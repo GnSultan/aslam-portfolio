@@ -25,7 +25,7 @@ export default function ProjectChallenge({ challenge, className = '' }: ProjectC
           </div>
 
           {/* Challenge statement - large, readable, plain language */}
-          <p className="text-2xl md:text-3xl text-text leading-relaxed font-light">
+          <p className="p-large text-text">
             {challenge}
           </p>
         </motion.div>

@@ -23,6 +23,9 @@ const config: Config = {
         'h1': ['clamp(3.5rem, 8vw, 7rem)', { lineHeight: '0.9', letterSpacing: '-0.03em' }],
         'h2': ['clamp(2.25rem, 5vw, 3.75rem)', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
         'h3': ['clamp(1.75rem, 3vw, 2.25rem)', { lineHeight: '1.2', letterSpacing: '-0.01em' }],
+        'body': ['1.5rem', { lineHeight: '1.7' }],
+        'body-large': ['1.75rem', { lineHeight: '1.7' }],
+        'body-small': ['1.25rem', { lineHeight: '1.6' }],
       },
       maxWidth: {
         'container': '1200px',

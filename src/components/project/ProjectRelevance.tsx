@@ -26,7 +26,7 @@ export default function ProjectRelevance({ note, className = '' }: ProjectReleva
 
             {/* Content */}
             <div className="relative z-10">
-              <p className="text-xl md:text-2xl text-text leading-relaxed font-light mb-6">
+              <p className="p-large text-text mb-6">
                 {note}
               </p>
 

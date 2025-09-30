@@ -29,8 +29,8 @@ export default function ProjectValueDelivered({ values, className = '' }: Projec
             <h2 className="h3 text-text">Value Delivered</h2>
           </div>
 
-          {/* Value list - simple and minimal */}
-          <div className="space-y-6">
+          {/* Value list - inline grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {values.map((item, index) => (
               <motion.div
                 key={index}
@@ -38,15 +38,15 @@ export default function ProjectValueDelivered({ values, className = '' }: Projec
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="flex items-baseline gap-6"
+                className="flex flex-col gap-2"
               >
                 {/* Value */}
-                <div className="text-3xl md:text-4xl font-bold text-text min-w-[120px]">
+                <div className="text-3xl md:text-4xl font-bold text-text">
                   {item.value}
                 </div>
 
                 {/* Label */}
-                <p className="text-lg md:text-xl text-text leading-relaxed font-light">
+                <p className="p text-text-secondary">
                   {item.label}
                 </p>
               </motion.div>

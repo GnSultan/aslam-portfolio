@@ -88,7 +88,7 @@ export default function ProjectPage() {
               <h1 className="h1 mb-6" data-text-hover>{project.title}</h1>
 
               {/* Short description */}
-              <p className="text-xl md:text-2xl text-text-secondary mb-12 leading-relaxed font-light">
+              <p className="p-large mb-12">
                 {project.description}
               </p>
 
@@ -96,25 +96,25 @@ export default function ProjectPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
                 {project.client && (
                   <div>
-                    <span className="text-sm text-text-secondary block mb-1">Client</span>
-                    <span className="font-medium text-text">{project.client}</span>
+                    <span className="p-small text-text-secondary block mb-1">Client</span>
+                    <span className="p font-semibold text-text">{project.client}</span>
                   </div>
                 )}
 
                 <div>
-                  <span className="text-sm text-text-secondary block mb-1">Type</span>
-                  <span className="font-medium text-text capitalize">{project.category}</span>
+                  <span className="p-small text-text-secondary block mb-1">Type</span>
+                  <span className="p font-semibold text-text capitalize">{project.category}</span>
                 </div>
 
                 <div>
-                  <span className="text-sm text-text-secondary block mb-1">Timeline</span>
-                  <span className="font-medium text-text">{project.year}</span>
+                  <span className="p-small text-text-secondary block mb-1">Timeline</span>
+                  <span className="p font-semibold text-text">{project.year}</span>
                 </div>
 
                 {project.duration && (
                   <div>
-                    <span className="text-sm text-text-secondary block mb-1">Duration</span>
-                    <span className="font-medium text-text">{project.duration}</span>
+                    <span className="p-small text-text-secondary block mb-1">Duration</span>
+                    <span className="p font-semibold text-text">{project.duration}</span>
                   </div>
                 )}
               </div>
@@ -316,7 +316,7 @@ export default function ProjectPage() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.5, delay: index * 0.05 }}
-                      className="px-4 py-2 border border-secondary text-text text-sm rounded-full"
+                      className="px-4 py-2 border border-secondary text-text p-small rounded-full"
                     >
                       {tech}
                     </motion.span>
@@ -402,7 +402,7 @@ export default function ProjectPage() {
           <section className="section-spaced">
             <div className="container-wide text-center">
               <h2 className="h2 mb-6">Let&apos;s build something great</h2>
-              <p className="text-xl text-text-secondary leading-relaxed max-w-2xl mx-auto mb-8">
+              <p className="p max-w-2xl mx-auto mb-8">
                 Have a project like this in mind? I&apos;d love to hear about it.
               </p>
               <a

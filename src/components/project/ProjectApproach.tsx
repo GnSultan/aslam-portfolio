@@ -43,9 +43,9 @@ export default function ProjectApproach({ methodology, keyDecisions, className =
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mb-16"
             >
-              <h3 className="text-xl font-medium text-text mb-6">Methodology</h3>
+              <h3 className="h3 text-text mb-6">Methodology</h3>
               <div className="relative pl-6 border-l-2 border-primary/20">
-                <p className="text-lg text-text-secondary leading-relaxed">
+                <p className="p text-text-secondary">
                   {methodology}
                 </p>
               </div>
@@ -60,7 +60,7 @@ export default function ProjectApproach({ methodology, keyDecisions, className =
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <h3 className="text-xl font-medium text-text mb-8">Key Strategic Decisions</h3>
+              <h3 className="h3 text-text mb-8">Key Strategic Decisions</h3>
 
               <div className="space-y-8">
                 {keyDecisions.map((item, index) => (
@@ -80,10 +80,10 @@ export default function ProjectApproach({ methodology, keyDecisions, className =
 
                       {/* Content */}
                       <div className="pb-6 border-b border-secondary/20 last:border-b-0">
-                        <h4 className="text-lg font-medium text-text mb-3 group-hover:text-primary transition-colors duration-300">
+                        <h4 className="p font-medium text-text mb-3 group-hover:text-primary transition-colors duration-300">
                           {item.decision}
                         </h4>
-                        <p className="text-text-secondary leading-relaxed">
+                        <p className="p text-text-secondary">
                           {item.rationale}
                         </p>
                       </div>

@@ -39,14 +39,14 @@ export default function About() {
               className="order-2 lg:order-1 lg:col-span-3"
             >
             <div className="space-y-6 content-text">
-              <p className="text-xl leading-relaxed text-text-secondary" data-text-hover>
-              Hi, I&apos;m Aslam—a brand strategist, designer, and developer. I build digital products that unite strategy, design, and technology, helping ideas grow into experiences that truly matter.
+              <p className="text-body leading-relaxed text-text-secondary" data-text-hover>
+              Hi, I&apos;m Aslam—a <span className="text-emphasis">brand strategist, designer, and developer</span>. I build digital products that unite strategy, design, and technology, helping ideas grow into experiences that truly matter.
               </p>
-              <p className="text-xl leading-relaxed text-text-secondary" data-text-hover>
-With a foundation in branding and storytelling, I bring clarity and intention to every project. By combining that with technical expertise, I transform ideas into custom websites and full-scale web applications that are not only functional but purposeful.
+              <p className="text-body leading-relaxed text-text-secondary" data-text-hover>
+With a foundation in branding and storytelling, I bring clarity and intention to every project. By combining that with technical expertise, I transform ideas into <span className="text-emphasis">custom websites and full-scale web applications</span> that are not only functional but purposeful.
               </p>
-              <p className="text-xl leading-relaxed text-text-secondary" data-text-hover>
-My approach is simple: start with why, design with empathy, and build with precision. Whether it&apos;s shaping a brand identity, crafting a user experience, or developing a product from the ground up, I focus on creating digital solutions that inspire trust, foster connection, and deliver lasting impact.
+              <p className="text-body leading-relaxed text-text-secondary" data-text-hover>
+My approach is simple: <span className="text-emphasis">start with why, design with empathy, and build with precision</span>. Whether it&apos;s shaping a brand identity, crafting a user experience, or developing a product from the ground up, I focus on creating digital solutions that inspire trust, foster connection, and deliver lasting impact.
               </p>
             </div>
           </motion.div>

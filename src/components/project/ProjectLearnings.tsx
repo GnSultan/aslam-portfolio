@@ -48,7 +48,7 @@ export default function ProjectLearnings({ learnings, className = '' }: ProjectL
 
                   {/* Learning content */}
                   <div className="pt-4">
-                    <p className="text-text leading-relaxed italic group-hover:text-text/90 transition-colors duration-300">
+                    <p className="p text-text italic group-hover:text-text/90 transition-colors duration-300">
                       {learning}
                     </p>
                   </div>

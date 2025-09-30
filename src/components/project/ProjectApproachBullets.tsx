@@ -41,7 +41,7 @@ export default function ProjectApproachBullets({ bullets, className = '' }: Proj
                 </div>
 
                 {/* Bullet text */}
-                <p className="text-lg md:text-xl text-text leading-relaxed font-light pt-1">
+                <p className="p text-text pt-1">
                   {bullet}
                 </p>
               </motion.div>

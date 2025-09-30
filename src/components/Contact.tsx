@@ -62,8 +62,8 @@ export default function Contact() {
               transition={{ duration: 0.6 }}
               className="lg:col-span-3"
             >
-            <p className="text-xl leading-relaxed text-text-secondary mb-8 content-text">
-              Ready to bring your ideas to life? Let&apos;s discuss your project and create something amazing together.
+            <p className="text-body leading-relaxed text-text-secondary mb-8 content-text">
+              Ready to bring your ideas to life? Let&apos;s discuss your project and <span className="text-emphasis">create something amazing together</span>.
             </p>
             
             {/* Contact Info */}
@@ -72,7 +72,7 @@ export default function Contact() {
                 <h3 className="text-lg font-medium text-text mb-2">Email</h3>
                 <a 
                   href="mailto:hello@imaslam.com" 
-                  className="text-text-secondary hover:text-primary transition-colors duration-300"
+                  className="text-body text-text-secondary hover:text-primary transition-colors duration-300"
                 >
                   hello@imaslam.com
                 </a>
@@ -80,14 +80,14 @@ export default function Contact() {
               
               <div>
                 <h3 className="text-lg font-medium text-text mb-2">Location</h3>
-                <p className="text-text-secondary">
+                <p className="text-body text-text-secondary">
                   Arusha, Tanzania
                 </p>
               </div>
               
               <div>
                 <h3 className="text-lg font-medium text-text mb-2">Available for</h3>
-                <p className="text-text-secondary">
+                <p className="text-body text-text-secondary">
                   Freelance projects & collaborations
                 </p>
               </div>

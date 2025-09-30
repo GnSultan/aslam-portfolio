@@ -60,8 +60,8 @@ export default function Services() {
               transition={{ duration: 0.6 }}
               className="lg:col-span-3"
             >
-            <p className="text-xl leading-relaxed text-text-secondary content-text">
-              I provide comprehensive design services that combine creativity with strategic thinking to deliver exceptional results for your projects.
+            <p className="p content-text">
+              I provide <span className="text-emphasis">comprehensive design services</span> that combine creativity with strategic thinking to deliver exceptional results for your projects.
             </p>
           </motion.div>
 
@@ -95,7 +95,7 @@ export default function Services() {
                       />
                     </div>
                     <h3 className="text-xl font-medium text-text mb-4">{service.title}</h3>
-                    <p className="text-text-secondary leading-relaxed">{service.description}</p>
+                    <p className="p">{service.description}</p>
                   </div>
                 </motion.div>
               ))}
