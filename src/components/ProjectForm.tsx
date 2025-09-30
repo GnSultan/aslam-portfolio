@@ -369,7 +369,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
           <ImageUpload
             value={formData.image}
             onChange={(url) => setFormData(prev => ({ ...prev, image: url }))}
-            label="Upload Hero Image"
+            placeholder="Upload Hero Image"
           />
         </div>
 

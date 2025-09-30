@@ -74,7 +74,7 @@ export default function ProjectTestimonial({ testimonial, className = '' }: Proj
               className="absolute -bottom-8 right-0 text-6xl text-text/20 font-serif"
             >
               &rdquo;
-
+            </motion.div>
           </div>
         </motion.div>
       </div>
