@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
+import { supabase } from '@/lib/supabase'
 
 interface ImageUploadProps {
   value: string
@@ -33,21 +34,33 @@ export default function ImageUpload({ value, onChange, placeholder = "Enter imag
     setIsUploading(true)
 
     try {
-      // Convert file to base64 for local storage
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const result = e.target?.result as string
-        onChange(result)
-        setIsUploading(false)
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+      const filePath = `project-images/${fileName}`
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('portfolio-assets')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+
+      if (error) {
+        throw error
       }
-      reader.onerror = () => {
-        alert('Error reading file')
-        setIsUploading(false)
-      }
-      reader.readAsDataURL(file)
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('portfolio-assets')
+        .getPublicUrl(filePath)
+
+      onChange(publicUrl)
+      setIsUploading(false)
     } catch (error) {
       console.error('Error uploading file:', error)
-      alert('Error uploading file')
+      alert('Error uploading file. Make sure the storage bucket exists.')
       setIsUploading(false)
     }
   }
