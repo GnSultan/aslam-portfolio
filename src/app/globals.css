@@ -90,30 +90,53 @@ html {
 
 
   h1, .h1 {
-    font-size: clamp(3rem, 7vw, 6rem);
-    font-weight: 400;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 600;
     line-height: 0.9;
     letter-spacing: -0.03em;
   }
 
   h2, .h2 {
-    font-size: clamp(2rem, 4vw, 3.5rem);
-    font-weight: 400;
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    font-weight: 500;
     line-height: 1.1;
     letter-spacing: -0.02em;
   }
 
   h3, .h3 {
-    font-size: clamp(1.5rem, 2.5vw, 2rem);
-    font-weight: 400;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 500;
     line-height: 1.2;
     letter-spacing: -0.01em;
   }
 
   p, .p {
     font-size: 1.125rem;
-    line-height: 1.7;
+    line-height: 1.6;
     color: var(--text-secondary);
+    max-width: 65ch;
+  }
+
+  /* Mobile typography optimizations */
+  @media (max-width: 768px) {
+    h1, .h1 {
+      font-size: clamp(2.5rem, 10vw, 4rem);
+      line-height: 1.1;
+    }
+    
+    h2, .h2 {
+      font-size: clamp(1.75rem, 6vw, 2.5rem);
+    }
+    
+    h3, .h3 {
+      font-size: clamp(1.5rem, 4vw, 1.875rem);
+    }
+    
+    p, .p {
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: none; /* Allow full width on mobile */
+    }
   }
 }
 
@@ -152,6 +175,35 @@ html {
 
   .p {
     @apply text-lg leading-relaxed text-text-secondary;
+  }
+
+  /* Content width constraints */
+  .content-width {
+    @apply max-w-6xl mx-auto;
+  }
+
+  .content-text {
+    @apply max-w-[65ch];
+  }
+
+  .wide-content {
+    @apply max-w-[75ch];
+  }
+
+  /* Font weight system */
+  .font-light { font-weight: 300; }
+  .font-normal { font-weight: 400; }
+  .font-medium { font-weight: 500; }
+  .font-semibold { font-weight: 600; }
+  .font-bold { font-weight: 700; }
+
+  /* Consistent spacing */
+  .text-spacing {
+    @apply mb-6;
+  }
+
+  .heading-spacing {
+    @apply mb-8;
   }
 
   .link-hover {

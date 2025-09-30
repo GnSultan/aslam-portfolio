@@ -38,7 +38,7 @@ export default function About() {
               transition={{ duration: 0.8 }}
               className="order-2 lg:order-1 lg:col-span-3"
             >
-            <div className="space-y-6">
+            <div className="space-y-6 content-text">
               <p className="text-xl leading-relaxed text-text-secondary" data-text-hover>
               Hi, I&apos;m Aslam—a brand strategist, designer, and developer. I build digital products that unite strategy, design, and technology, helping ideas grow into experiences that truly matter.
               </p>

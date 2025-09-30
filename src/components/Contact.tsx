@@ -62,7 +62,7 @@ export default function Contact() {
               transition={{ duration: 0.6 }}
               className="lg:col-span-3"
             >
-            <p className="text-xl leading-relaxed text-text-secondary mb-8">
+            <p className="text-xl leading-relaxed text-text-secondary mb-8 content-text">
               Ready to bring your ideas to life? Let&apos;s discuss your project and create something amazing together.
             </p>
             

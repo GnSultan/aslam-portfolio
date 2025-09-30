@@ -33,6 +33,19 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'ampovegjevdjlsjgkxgn.supabase.co',
+        port: '',
+        pathname: '/**',
+      },
+      // Add any other Supabase projects dynamically
+      ...(process.env.NEXT_PUBLIC_SUPABASE_URL ? [{
+        protocol: 'https' as const,
+        hostname: new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname,
+        port: '',
+        pathname: '/**',
+      }] : []),
     ],
   },
 };

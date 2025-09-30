@@ -60,7 +60,7 @@ export default function Services() {
               transition={{ duration: 0.6 }}
               className="lg:col-span-3"
             >
-            <p className="text-xl leading-relaxed text-text-secondary">
+            <p className="text-xl leading-relaxed text-text-secondary content-text">
               I provide comprehensive design services that combine creativity with strategic thinking to deliver exceptional results for your projects.
             </p>
           </motion.div>

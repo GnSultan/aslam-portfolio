@@ -28,12 +28,12 @@ export default function Hero() {
       >
           <h1
             id="hero-heading"
-            className="h1 mb-0 font-bold text-[clamp(5rem,12vw,10rem)]"
+            className="h1 mb-0"
             tabIndex={-1}
             data-text-hover
           >
             <motion.div className="text-center font-semibold" style={{ x }}>I&apos;m Aslam</motion.div>
-            <div className="text-center font-normal">a designer /</div>
+            <div className="text-center font-medium">a designer /</div>
             <motion.div className="text-center font-semibold" style={{ x: xRight }}>developer<span className="cursor-blink">_</span></motion.div>
           </h1>
       </motion.div>

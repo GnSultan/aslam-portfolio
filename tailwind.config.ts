@@ -20,12 +20,14 @@ const config: Config = {
         sans: ['var(--font-sans)'],
       },
       fontSize: {
-        'h1': ['clamp(2.5rem, 5vw, 5rem)', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
-        'h2': ['clamp(1.5rem, 3vw, 2.5rem)', { lineHeight: '1.2', letterSpacing: '-0.01em' }],
-        'h3': ['clamp(1.25rem, 2vw, 1.75rem)', { lineHeight: '1.3' }],
+        'h1': ['clamp(3.5rem, 8vw, 7rem)', { lineHeight: '0.9', letterSpacing: '-0.03em' }],
+        'h2': ['clamp(2.25rem, 5vw, 3.75rem)', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
+        'h3': ['clamp(1.75rem, 3vw, 2.25rem)', { lineHeight: '1.2', letterSpacing: '-0.01em' }],
       },
       maxWidth: {
         'container': '1200px',
+        'content': '65ch',
+        'wide-content': '75ch',
       },
       spacing: {
         'section': 'var(--section-padding)',

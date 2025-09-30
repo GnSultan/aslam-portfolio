@@ -182,7 +182,7 @@ export default function Navigation() {
           >
             <Link
               href="/#hero"
-              className={`text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1 relative ${
+              className={`text-lg text-text/70 hover:text-text transition-colors focus:outline-none rounded px-3 py-2 relative ${
                 currentSection === 'hero'
                   ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current'
                   : 'link-hover'
@@ -199,7 +199,7 @@ export default function Navigation() {
             </Link>
             <Link
               href="/#projects"
-              className={`text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1 relative ${
+              className={`text-lg text-text/70 hover:text-text transition-colors focus:outline-none rounded px-3 py-2 relative ${
                 currentSection === 'projects'
                   ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current'
                   : 'link-hover'
@@ -216,7 +216,7 @@ export default function Navigation() {
             </Link>
             <Link
               href="/#about"
-              className={`text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1 relative ${
+              className={`text-lg text-text/70 hover:text-text transition-colors focus:outline-none rounded px-3 py-2 relative ${
                 currentSection === 'about'
                   ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current'
                   : 'link-hover'
@@ -245,7 +245,7 @@ export default function Navigation() {
               href={siteConfig.social.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1"
+              className="text-lg text-text/70 hover:text-text transition-colors focus:outline-none rounded px-3 py-2"
               aria-label="Visit GitHub profile (opens in new tab)"
               data-cursor-text="GitHub"
               data-magnetic
@@ -256,7 +256,7 @@ export default function Navigation() {
               href={siteConfig.social.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-text/70 hover:text-text transition-colors focus:outline-none rounded px-2 py-1"
+              className="text-lg text-text/70 hover:text-text transition-colors focus:outline-none rounded px-3 py-2"
               aria-label="Visit LinkedIn profile (opens in new tab)"
               data-cursor-text="LinkedIn"
               data-magnetic
@@ -265,7 +265,7 @@ export default function Navigation() {
             </a>
             <a
               href={`mailto:${siteConfig.email}`}
-              className="text-text/70 hover:text-primary transition-colors duration-300 link-hover focus:outline-none rounded px-2 py-1"
+              className="text-lg text-text/70 hover:text-primary transition-colors duration-300 link-hover focus:outline-none rounded px-3 py-2"
               aria-label="Send email"
               data-cursor-text="Say Hello"
               data-magnetic
@@ -304,7 +304,7 @@ export default function Navigation() {
             <nav className="py-4 space-y-2" role="navigation" aria-label="Mobile navigation">
               <Link
                 href="/#hero"
-                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
+                className={`block w-full text-left px-4 py-3 text-lg text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
                   currentSection === 'hero' ? 'text-text font-medium bg-secondary/20' : ''
                 }`}
                 onClick={(e) => {
@@ -317,7 +317,7 @@ export default function Navigation() {
               </Link>
               <Link
                 href="/#projects"
-                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
+                className={`block w-full text-left px-4 py-3 text-lg text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
                   currentSection === 'projects' ? 'text-text font-medium bg-secondary/20' : ''
                 }`}
                 onClick={(e) => {
@@ -330,7 +330,7 @@ export default function Navigation() {
               </Link>
               <Link
                 href="/#about"
-                className={`block w-full text-left px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
+                className={`block w-full text-left px-4 py-3 text-lg text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
                   currentSection === 'about' ? 'text-text font-medium bg-secondary/20' : ''
                 }`}
                 onClick={(e) => {
@@ -346,7 +346,7 @@ export default function Navigation() {
                   href={siteConfig.social.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg"
+                  className="block px-4 py-3 text-lg text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg"
                 >
                   Github
                 </a>
@@ -354,13 +354,13 @@ export default function Navigation() {
                   href={siteConfig.social.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block px-4 py-2 text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg"
+                  className="block px-4 py-3 text-lg text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg"
                 >
                   LinkedIn
                 </a>
                 <a
                   href={`mailto:${siteConfig.email}`}
-                  className="block px-4 py-2 text-text/70 hover:text-primary hover:bg-secondary/50 transition-colors duration-300 rounded-lg"
+                  className="block px-4 py-3 text-lg text-text/70 hover:text-primary hover:bg-secondary/50 transition-colors duration-300 rounded-lg"
                   aria-label="Send email"
                 >
                   Contact

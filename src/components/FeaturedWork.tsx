@@ -11,28 +11,42 @@ export default function FeaturedWork() {
   const [projects, setProjects] = useState<Project[]>([])
   const [activeProject, setActiveProject] = useState<Project | null>(null)
   const [hoveredProject, setHoveredProject] = useState<Project | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null)
   const currentHoveredProject = useRef<Project | null>(null)
   const mousePositionRef = useRef({ x: 0, y: 0, lastMoveTime: 0 })
   const mouseMoveCountRef = useRef(0)
+  const lastActiveProjectRef = useRef<Project | null>(null)
 
   useEffect(() => {
     const loadProjects = async () => {
       try {
+        setIsLoading(true)
         const featuredProjects = await getFeaturedProjects()
         setProjects(featuredProjects)
         if (featuredProjects.length > 0) {
           setActiveProject(featuredProjects[0])
+          lastActiveProjectRef.current = featuredProjects[0]
+          // Reset hover states when projects load
+          setHoveredProject(null)
+          currentHoveredProject.current = null
         }
       } catch (error) {
         console.error('Error loading featured projects:', error)
+        // Set empty state on error
+        setProjects([])
+        setActiveProject(null)
+        setHoveredProject(null)
+        lastActiveProjectRef.current = null
+      } finally {
+        setIsLoading(false)
       }
     }
 
     loadProjects()
   }, [])
 
-  // Track mouse movement to detect intentional hovering
+  // Simplified mouse movement tracking
   const handleMouseMove = useCallback((event: React.MouseEvent) => {
     const now = Date.now()
     const currentPos = { x: event.clientX, y: event.clientY }
@@ -46,23 +60,28 @@ export default function FeaturedWork() {
     // Update position tracking
     mousePositionRef.current = { ...currentPos, lastMoveTime: now }
 
-    // If mouse moved significantly recently, it's likely unintentional
-    if (distance > 3 && (now - lastPos.lastMoveTime) < 100) {
+    // Only reset timer if there's significant movement (more than 10px)
+    if (distance > 10) {
       mouseMoveCountRef.current++
-
-      // Reset timer if too much movement
-      if (mouseMoveCountRef.current > 2) {
+      
+      // Only reset timer if there's excessive movement
+      if (mouseMoveCountRef.current > 5) {
         if (hoverTimerRef.current) {
           clearTimeout(hoverTimerRef.current)
           hoverTimerRef.current = null
         }
-        return
+        mouseMoveCountRef.current = 0
       }
     }
   }, [])
 
-  // Intentional hover handlers with stricter detection
+  // Simplified hover handler for better reliability
   const handleProjectHover = useCallback((project: Project, event: React.MouseEvent) => {
+    // Don't process hover if already active or if it's the same project
+    if (activeProject?.id === project.id || lastActiveProjectRef.current?.id === project.id) {
+      return
+    }
+
     // Set immediate hover state for visual feedback
     setHoveredProject(project)
 
@@ -81,14 +100,15 @@ export default function FeaturedWork() {
 
     currentHoveredProject.current = project
 
-    // Longer delay and require mouse to be relatively stationary
+    // Shorter delay for better responsiveness
     hoverTimerRef.current = setTimeout(() => {
-      // Only update if user is still hovering the same project and mouse is relatively still
-      if (currentHoveredProject.current === project && mouseMoveCountRef.current <= 2) {
+      // Only update if user is still hovering the same project and it's different from current
+      if (currentHoveredProject.current === project && activeProject?.id !== project.id) {
         setActiveProject(project)
+        lastActiveProjectRef.current = project
       }
-    }, 500) // 500ms delay for more intentional hovering
-  }, [])
+    }, 300) // Reduced from 500ms to 300ms for better responsiveness
+  }, [activeProject])
 
   const handleProjectLeave = useCallback(() => {
     // Clear immediate hover state
@@ -111,6 +131,26 @@ export default function FeaturedWork() {
       }
     }
   }, [])
+
+  // Show loading state while projects are loading
+  if (isLoading) {
+    return (
+      <section 
+        id="projects" 
+        className="section-spaced"
+        aria-labelledby="projects-heading"
+      >
+        <div className="container-wide">
+          <div className="flex items-center justify-center h-[600px]">
+            <div className="text-center">
+              <div className="animate-spin w-12 h-12 border-4 border-text/20 border-t-text/50 rounded-full mx-auto mb-4"></div>
+              <p className="text-text/50">Loading featured work...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   // Don't render if no projects
   if (projects.length === 0) {
@@ -298,10 +338,18 @@ export default function FeaturedWork() {
                     containerClassName="relative w-full h-full"
                     sizes="(max-width: 768px) 100vw, 50vw"
                     quality={90}
+                    priority={activeProject.id === projects[0]?.id}
                   />
                 </Link>
               </motion.div>
-            ) : null}
+            ) : (
+              <div className="relative w-[480px] lg:w-[520px] h-[600px] mx-auto flex items-center justify-center bg-secondary/10 rounded-lg">
+                <div className="text-text/50 text-center">
+                  <div className="animate-spin w-8 h-8 border-2 border-text/20 border-t-text/50 rounded-full mx-auto mb-4"></div>
+                  <p>Loading project...</p>
+                </div>
+              </div>
+            )}
           </motion.div>
         </div>
       </div>
