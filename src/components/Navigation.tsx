@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { siteConfig } from '@/config/site'
 
@@ -26,47 +26,40 @@ export default function Navigation() {
       return
     }
 
-    if (sectionId === currentSection) return
+    setCurrentSection(sectionId)
+    setIsMobileMenuOpen(false)
 
-    // Reset navigation state to ensure transition works every time
-    setIsNavigating(false)
-    setTimeout(() => {
-      setIsNavigating(true)
-      setCurrentSection(sectionId)
-      setIsMobileMenuOpen(false)
-    }, 10)
-
-    // Create page-like transition effect
-    setTimeout(() => {
-      const element = document.getElementById(sectionId)
-      if (element) {
-        // Disable Lenis temporarily for instant positioning
-        if (typeof window !== 'undefined' && (window as unknown as { lenis?: { stop: () => void, start: () => void } }).lenis) {
-          (window as unknown as { lenis: { stop: () => void, start: () => void } }).lenis.stop()
+    const element = document.getElementById(sectionId)
+    if (element) {
+      // Use Lenis for dramatic, buttery smooth scrolling
+      const lenis = (window as unknown as { lenis?: { scrollTo: (target: HTMLElement | number, options?: { offset?: number, duration?: number, easing?: (t: number) => number }) => void } }).lenis
+      if (lenis) {
+        // Custom easing for dramatic, enjoyable scroll animation
+        // Ease-in-out-cubic for smooth acceleration and deceleration
+        const easeInOutCubic = (t: number) => {
+          return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
         }
 
-        // Instantly position to the section
+        lenis.scrollTo(element, {
+          offset: -80,
+          duration: 2.5, // Longer duration for more dramatic effect
+          easing: easeInOutCubic
+        })
+      } else {
+        // Fallback to native smooth scroll
         window.scrollTo({
           top: element.offsetTop - 80,
-          behavior: 'instant'
+          behavior: 'smooth'
         })
-
-        // Re-enable Lenis after positioning
-        setTimeout(() => {
-          if (typeof window !== 'undefined' && (window as unknown as { lenis?: { start: () => void } }).lenis) {
-            (window as unknown as { lenis: { start: () => void } }).lenis.start()
-          }
-          setIsNavigating(false)
-        }, 100)
       }
-        }, 260) // Half of transition duration + reset delay
+    }
   }
 
   // Handle hash navigation on page load
   useEffect(() => {
     const handleHashNavigation = () => {
       const hash = window.location.hash.replace('#', '')
-      if (hash && ['hero', 'projects', 'about'].includes(hash)) {
+      if (hash && ['hero', 'projects', 'about', 'contact'].includes(hash)) {
         // Small delay to ensure page is loaded
         setTimeout(() => {
           navigateToSection(hash)
@@ -80,6 +73,7 @@ export default function Navigation() {
     // Handle hash changes
     window.addEventListener('hashchange', handleHashNavigation)
     return () => window.removeEventListener('hashchange', handleHashNavigation)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -231,6 +225,23 @@ export default function Navigation() {
             >
               About
             </Link>
+            <Link
+              href="/#contact"
+              className={`text-lg text-text/70 hover:text-text transition-colors focus:outline-none rounded px-3 py-2 relative ${
+                currentSection === 'contact'
+                  ? 'text-text font-medium after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-current'
+                  : 'link-hover'
+              }`}
+              aria-label="Navigate to Contact section"
+              data-cursor-text="Get in Touch"
+              data-magnetic
+              onClick={(e) => {
+                e.preventDefault()
+                navigateToSection('contact')
+              }}
+            >
+              Contact
+            </Link>
           </nav>
 
           {/* Desktop Social Links & Contact */}
@@ -251,17 +262,6 @@ export default function Navigation() {
               data-magnetic
             >
               Github
-            </a>
-            <a
-              href={siteConfig.social.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-lg text-text/70 hover:text-text transition-colors focus:outline-none rounded px-3 py-2"
-              aria-label="Visit LinkedIn profile (opens in new tab)"
-              data-cursor-text="LinkedIn"
-              data-magnetic
-            >
-              LinkedIn
             </a>
             <a
               href={`mailto:${siteConfig.email}`}
@@ -341,6 +341,19 @@ export default function Navigation() {
               >
                 About
               </Link>
+              <Link
+                href="/#contact"
+                className={`block w-full text-left px-4 py-3 text-lg text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg ${
+                  currentSection === 'contact' ? 'text-text font-medium bg-secondary/20' : ''
+                }`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigateToSection('contact')
+                  setIsMobileMenuOpen(false)
+                }}
+              >
+                Contact
+              </Link>
               <div className="border-t border-secondary/20 mt-4 pt-4">
                 <a
                   href={siteConfig.social.github}
@@ -349,14 +362,6 @@ export default function Navigation() {
                   className="block px-4 py-3 text-lg text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg"
                 >
                   Github
-                </a>
-                <a
-                  href={siteConfig.social.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block px-4 py-3 text-lg text-text/70 hover:text-text hover:bg-secondary/50 transition-colors rounded-lg"
-                >
-                  LinkedIn
                 </a>
                 <a
                   href={`mailto:${siteConfig.email}`}
