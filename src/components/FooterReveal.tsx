@@ -2,7 +2,6 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef, useState, useLayoutEffect } from 'react'
-import ResizeObserver from 'resize-observer-polyfill'
 
 interface FooterRevealProps {
   children: React.ReactNode
@@ -23,13 +22,16 @@ export default function FooterReveal({ children, footer }: FooterRevealProps) {
 
     measure()
 
-    const resizeObserver = new ResizeObserver(measure)
-    if (footerRef.current) {
-      resizeObserver.observe(footerRef.current)
-    }
+    // Use native ResizeObserver (available in all modern browsers)
+    if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
+      const resizeObserver = new window.ResizeObserver(measure)
+      if (footerRef.current) {
+        resizeObserver.observe(footerRef.current)
+      }
 
-    return () => {
-      resizeObserver.disconnect()
+      return () => {
+        resizeObserver.disconnect()
+      }
     }
   }, [])
 
