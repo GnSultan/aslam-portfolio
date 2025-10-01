@@ -1,101 +1,55 @@
 'use client'
 
-import { motion, useInView } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
-
-const Cursor = () => (
-  <motion.span
-    className="inline-block ml-1"
-    animate={{
-      opacity: [1, 0, 1],
-    }}
-    transition={{
-      duration: 1,
-      repeat: Infinity,
-      ease: 'easeInOut',
-    }}
-  >
-    _
-  </motion.span>
-)
+import { motion } from 'framer-motion'
 
 export default function PurposeStatement() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const isInView = useInView(containerRef, { once: true, margin: '-100px' })
-  const [typedText, setTypedText] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
-
-  const textLines = [
-    "In a world where technology often overwhelms,",
-    "I believe true impact comes from creating tools and experiences",
-    "that empower people, foster clarity, and inspire meaningful connection.",
-    "<br />",
-    "<br />",
-    "My work is driven by the belief that design and technology should not just exist—",
-    "they should make life easier, amplify creativity, and bring people closer together."
-  ]
-
-  useEffect(() => {
-    if (isInView) {
-      setIsTyping(true)
-      const fullText = textLines.join(' ').replace(/<br \/>/g, '<br /> ')
-      let currentText = ''
-      let i = 0
-
-      const type = () => {
-        if (i < fullText.length) {
-          const char = fullText.charAt(i)
-          const isMistake = Math.random() < 0.1 // 10% chance of mistake
-
-          if (isMistake && char !== '<' && char !== 'b' && char !== 'r' && char !== '/' && char !== '>') {
-            const mistake = String.fromCharCode(97 + Math.floor(Math.random() * 26)) // random letter
-            setTypedText(currentText + mistake)
-            setTimeout(() => {
-              setTypedText(currentText)
-              setTimeout(() => {
-                currentText += char
-                setTypedText(currentText)
-                i++
-                setTimeout(type, 50 + Math.random() * 50)
-              }, 100)
-            }, 250)
-          } else {
-            currentText += char
-            setTypedText(currentText)
-            i++
-            const delay = char === ' ' ? 100 + Math.random() * 100 : 50 + Math.random() * 50
-            setTimeout(type, delay)
-          }
-        } else {
-          setIsTyping(false)
-        }
-      }
-
-      type()
-    }
-  }, [isInView])
-
   return (
-    <section ref={containerRef} className="h-screen flex items-center justify-end">
+    <section className="section-spaced py-32 lg:py-40">
       <div className="container-wide">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left half - empty space */}
-          <div></div>
+        {/* Asymmetric Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-          {/* Right half - purpose statement with typing effect */}
-          <div className="max-w-2xl">
-            <div className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-tight text-text-secondary">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isInView ? 1 : 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline"
-              >
-                <span dangerouslySetInnerHTML={{ __html: typedText }} />
-                {(isTyping || typedText.length > 0) && <Cursor />}
-              </motion.div>
+          {/* Quote indicator - Top Left */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: 'easeOut' }}
+            className="lg:col-span-1 lg:col-start-1"
+            aria-hidden="true"
+          >
+            {/* Square bracket style quote */}
+            <div className="flex flex-col gap-1">
+              <div className="w-12 h-px bg-text" />
+              <div className="w-px h-16 bg-text self-start" />
             </div>
-          </div>
+          </motion.div>
+
+          {/* Quote Text - Column 2-9 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: 'easeOut', delay: 0.2 }}
+            className="lg:col-span-8 lg:col-start-2"
+          >
+            <blockquote>
+              {/* Main statement */}
+              <p className="text-[clamp(2rem,5vw,3.5rem)] leading-[1.15] tracking-tight text-text font-medium mb-8">
+                I believe design and technology should bring clarity to complexity,
+                and create tools that empower people to do meaningful work.
+              </p>
+
+              {/* Attribution */}
+              <footer className="flex items-center gap-4 pt-4">
+                <div className="h-px w-12 bg-text-secondary/30" />
+                <cite className="p text-text-secondary not-italic">
+                  Purpose
+                </cite>
+              </footer>
+            </blockquote>
+          </motion.div>
+
         </div>
       </div>
     </section>
