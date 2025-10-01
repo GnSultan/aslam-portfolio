@@ -7,7 +7,8 @@ import { Project } from '@/types/project'
 import { getProjects } from '@/lib/projects'
 import Navigation from '@/components/Navigation'
 import ParallaxImage from '@/components/ParallaxImage'
-import GlobalFooterReveal from '@/components/GlobalFooterReveal'
+import Footer from '@/components/Footer'
+import FooterReveal from '@/components/FooterReveal'
 
 interface ProjectsByYear {
   [year: number]: Project[]
@@ -47,8 +48,6 @@ export default function ProjectsPage() {
         setProjectsByYear(grouped)
       } catch (error) {
         console.error('Error loading projects:', error)
-      } finally {
-        setLoading(false)
       }
     }
 
@@ -258,8 +257,7 @@ export default function ProjectsPage() {
         </section>
       )}
 
-      {/* Footer Reveal Effect */}
-      <GlobalFooterReveal>
+      <FooterReveal footer={<Footer />}>
         <div className="section-spaced">
           <div className="container-wide text-center">
             <h2 className="h2 mb-6">Ready to work together?</h2>
@@ -274,7 +272,7 @@ export default function ProjectsPage() {
             </a>
           </div>
         </div>
-      </GlobalFooterReveal>
+      </FooterReveal>
     </div>
   )
 }

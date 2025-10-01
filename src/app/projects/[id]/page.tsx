@@ -7,7 +7,8 @@ import { Project } from '@/types/project'
 import { getProject, getProjects } from '@/lib/projects'
 import Navigation from '@/components/Navigation'
 import ParallaxImage from '@/components/ParallaxImage'
-import GlobalFooterReveal from '@/components/GlobalFooterReveal'
+import Footer from '@/components/Footer'
+import FooterReveal from '@/components/FooterReveal'
 import HorizontalScrollCarousel from '@/components/HorizontalScrollCarousel'
 import PortfolioLoader from '@/components/ui/PortfolioLoader'
 import ProjectNotFound from '@/components/ui/ProjectNotFound'
@@ -342,78 +343,63 @@ export default function ProjectPage() {
           <ProjectRelevance note={project.relevanceNote} />
         )}
 
-        {/* See More Projects */}
-        <section className="section-spaced bg-secondary/30">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-16 overflow-hidden w-full"
-          >
-            <div className="relative w-full">
-              <div className="flex animate-scroll-right-to-left w-full">
-                <div className="flex items-center gap-12 whitespace-nowrap">
-                  <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
-                    <span className="text-primary/20">*</span>
-                    SEE
-                  </span>
-                  <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
-                    <span className="text-primary/20">*</span>
-                    MORE
-                  </span>
-                  <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
-                    <span className="text-primary/20">*</span>
-                    SEE
-                  </span>
-                  <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
-                    <span className="text-primary/20">*</span>
-                    MORE
-                  </span>
-                </div>
+        <FooterReveal footer={<Footer />}>
+          <section className="section-spaced bg-secondary/30">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="mb-16 overflow-hidden w-full"
+            >
+              <div className="relative w-full">
+                <div className="flex animate-scroll-right-to-left w-full">
+                  <div className="flex items-center gap-12 whitespace-nowrap">
+                    <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                      <span className="text-primary/20">*</span>
+                      SEE
+                    </span>
+                    <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                      <span className="text-primary/20">*</span>
+                      MORE
+                    </span>
+                    <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                      <span className="text-primary/20">*</span>
+                      SEE
+                    </span>
+                    <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                      <span className="text-primary/20">*</span>
+                      MORE
+                    </span>
+                  </div>
 
-                <div className="flex items-center gap-12 whitespace-nowrap ml-24">
-                  <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
-                    <span className="text-primary/20">*</span>
-                    SEE
-                  </span>
-                  <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
-                    <span className="text-primary/20">*</span>
-                    MORE
-                  </span>
-                  <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
-                    <span className="text-primary/20">*</span>
-                    SEE
-                  </span>
-                  <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
-                    <span className="text-primary/20">*</span>
-                    MORE
-                  </span>
+                  <div className="flex items-center gap-12 whitespace-nowrap ml-24">
+                    <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                      <span className="text-primary/20">*</span>
+                      SEE
+                    </span>
+                    <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                      <span className="text-primary/20">*</span>
+                      MORE
+                    </span>
+                    <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                      <span className="text-primary/20">*</span>
+                      SEE
+                    </span>
+                    <span className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-text/10 flex items-center gap-6">
+                      <span className="text-primary/20">*</span>
+                      MORE
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
 
-          <HorizontalScrollCarousel projects={allProjects} currentProjectId={project.id} />
-        </section>
+            <HorizontalScrollCarousel projects={allProjects} currentProjectId={project.id} />
+          </section>
+        </FooterReveal>
 
         {/* Footer */}
-        <GlobalFooterReveal>
-          <section className="section-spaced">
-            <div className="container-wide text-center">
-              <h2 className="h2 mb-6">Let&apos;s build something great</h2>
-              <p className="p max-w-2xl mx-auto mb-8">
-                Have a project like this in mind? I&apos;d love to hear about it.
-              </p>
-              <a
-                href="mailto:hello@aslam.com"
-                className="inline-block px-8 py-4 bg-text text-background rounded-lg hover:bg-text/90 transition-colors"
-              >
-                Get in Touch
-              </a>
-            </div>
-          </section>
-        </GlobalFooterReveal>
       </div>
     </ErrorBoundary>
   )
