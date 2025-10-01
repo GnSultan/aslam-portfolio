@@ -13,10 +13,15 @@ export default function Hero() {
   // Rotate asterisk on scroll
   const rotate = useTransform(scrollYProgress, [0, 1], [0, 360])
 
+  // Fade out and shrink as you scroll away - "going far" effect
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.5, 0])
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.95, 0.9])
+
   return (
-    <section
+    <motion.section
       ref={heroRef}
       id="hero"
+      style={{ opacity, scale }}
       className="min-h-screen flex items-center w-full px-4 sm:px-6 lg:px-16 relative"
       role="main"
       aria-labelledby="hero-heading"
@@ -103,6 +108,6 @@ export default function Hero() {
           </p>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   )
 }

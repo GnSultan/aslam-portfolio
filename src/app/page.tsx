@@ -5,7 +5,6 @@ import Hero from '@/components/Hero'
 import PurposeStatement from '@/components/PurposeStatement'
 import FeaturedWork from '@/components/FeaturedWork'
 import About from '@/components/About'
-import Skills from '@/components/Skills'
 import Services from '@/components/Services'
 import Gallery from '@/components/Gallery'
 import Contact from '@/components/Contact'
@@ -19,7 +18,6 @@ export default function Home() {
       <PurposeStatement />
       <FeaturedWork />
       <About />
-      <Skills />
       <Services />
       <Gallery />
 
