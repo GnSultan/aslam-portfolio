@@ -44,7 +44,7 @@ export default function FooterReveal({ children, footer }: FooterRevealProps) {
   return (
     <>
       {/* Contact Section - scrolls normally */}
-      <div className="relative bg-background">
+      <div className="relative">
         {children}
       </div>
 

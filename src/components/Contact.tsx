@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 export default function Contact() {
   return (
     <section
-      className="section-spaced bg-background relative"
+      className="section-spaced relative"
       id="contact"
     >
       <div className="container-wide flex flex-col min-h-screen py-16 lg:py-20">
