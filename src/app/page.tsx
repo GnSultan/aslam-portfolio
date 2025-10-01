@@ -8,7 +8,8 @@ import About from '@/components/About'
 import Services from '@/components/Services'
 import Gallery from '@/components/Gallery'
 import Contact from '@/components/Contact'
-import GlobalFooterReveal from '@/components/GlobalFooterReveal'
+import Footer from '@/components/Footer'
+import FooterReveal from '@/components/FooterReveal'
 
 export default function Home() {
   return (
@@ -21,10 +22,9 @@ export default function Home() {
       <Services />
       <Gallery />
 
-      {/* Footer Reveal Effect */}
-      <GlobalFooterReveal>
+      <FooterReveal footer={<Footer />}>
         <Contact />
-      </GlobalFooterReveal>
+      </FooterReveal>
     </main>
   )
 }
