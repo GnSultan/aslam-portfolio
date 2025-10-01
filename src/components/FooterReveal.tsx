@@ -1,7 +1,8 @@
 'use client'
 
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useLayoutEffect } from 'react'
+import ResizeObserver from 'resize-observer-polyfill'
 
 interface FooterRevealProps {
   children: React.ReactNode
@@ -10,40 +11,73 @@ interface FooterRevealProps {
 
 export default function FooterReveal({ children, footer }: FooterRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const footerRef = useRef<HTMLDivElement>(null)
+  const [footerHeight, setFooterHeight] = useState(0)
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (footerRef.current) {
+        setFooterHeight(footerRef.current.offsetHeight)
+      }
+    }
+
+    measure()
+
+    const resizeObserver = new ResizeObserver(measure)
+    if (footerRef.current) {
+      resizeObserver.observe(footerRef.current)
+    }
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [])
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end end"]
+    offset: ['start end', 'end end']
   })
 
-  // Smooth, gradual transform for the last section - restored smooth animation
-  const lastSectionY = useTransform(scrollYProgress, [0.4, 1], [0, -350])
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.5, 1])
+  const scale = useTransform(scrollYProgress, [0, 1], [0.8, 1])
 
   return (
-    <div
-      ref={containerRef}
-      className="relative"
-      style={{ height: 'calc(100vh + 400px)' }} // Reduced container height to fix footer timing
-    >
-      {/* Last Section - Slides up gradually - FIRST to be on top */}
-      <motion.div
-        style={{
-          y: lastSectionY,
-          willChange: 'transform',
-          zIndex: 10
-        }}
-        className="relative bg-background min-h-screen"
-      >
+    <>
+      {/* Contact Section - scrolls normally */}
+      <div className="relative bg-background">
         {children}
-      </motion.div>
-
-      {/* Footer - Absolutely positioned at container bottom, never moves - SECOND to be behind */}
-      <div
-        className="absolute bottom-0 left-0 w-full"
-        style={{ zIndex: 1 }}
-      >
-        {footer}
       </div>
-    </div>
+
+      {/* Footer Reveal Container - sticky footer method with scroll animation */}
+      <div
+        ref={containerRef}
+        className="relative"
+        style={{
+          height: footerHeight || 'auto',
+          clipPath: 'polygon(0% 0, 100% 0%, 100% 100%, 0 100%)'
+        }}
+      >
+        <div
+          className="relative"
+          style={{
+            height: footerHeight ? `calc(100vh + ${footerHeight}px)` : '100vh',
+            top: '-100vh'
+          }}
+        >
+          <motion.div
+            ref={footerRef}
+            className="sticky w-full"
+            style={{
+              height: footerHeight || 'auto',
+              top: footerHeight ? `calc(100vh - ${footerHeight}px)` : '0',
+              opacity,
+              scale
+            }}
+          >
+            {footer}
+          </motion.div>
+        </div>
+      </div>
+    </>
   )
 }
