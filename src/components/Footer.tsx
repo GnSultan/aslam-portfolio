@@ -7,17 +7,17 @@ export default function Footer() {
     <footer
       style={{
         backgroundColor: 'var(--footer)',
-        backgroundImage: 'linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px)',
+        backgroundImage: 'linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)',
         backgroundSize: '200px 200px',
         backgroundAttachment: 'fixed',
         backgroundPosition: '0 0'
       }}
       className="text-white py-24"
     >
-      <div className="w-full px-4 sm:px-6 lg:px-16">
-        <div className="text-center">
+      <div className="w-full">
+        <div className="text-center px-4 sm:px-6 lg:px-16">
           {/* Large copyright spanning full width */}
-          <h2 className="text-[clamp(4rem,12vw,10rem)] leading-[1] tracking-tight font-bold mb-12 w-full">
+          <h2 className="text-[clamp(8rem,25vw,20rem)] leading-[1] tracking-tighter font-medium mb-12">
             © {currentYear}
           </h2>
 

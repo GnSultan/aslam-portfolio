@@ -14,36 +14,36 @@ interface GlobalFooterRevealProps {
 // Page-level wrapper that creates footer reveal effect
 // Wraps the last section and places footer underneath
 export default function GlobalFooterReveal({
-  children,
-  animationRange = [0.4, 1],
-  slideDistance = 350,
-  containerHeight = 'calc(100vh + 400px)'
+  children
 }: GlobalFooterRevealProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start end', 'end end']
-  })
-
-  const lastSectionY = useTransform(scrollYProgress, animationRange, [0, -Math.abs(slideDistance)])
-  const wrapperStyle = useMemo(() => ({ height: containerHeight }), [containerHeight])
+  const footerHeight = 590
 
   return (
-    <div ref={containerRef} className="relative" style={wrapperStyle}>
-      {/* Last Section - Slides up gradually */}
-      <motion.div
-        style={{ y: lastSectionY, willChange: 'transform', zIndex: 10 }}
-        className="relative bg-background min-h-screen"
-      >
+    <>
+      {/* Contact Section - scrolls normally */}
+      <div className="relative bg-background">
         {children}
-      </motion.div>
-
-      {/* Footer - Absolutely positioned at container bottom, never moves */}
-      <div className="absolute bottom-0 left-0 w-full" style={{ zIndex: 1 }}>
-        <Footer />
       </div>
-    </div>
+
+      {/* Footer Reveal Container */}
+      <div
+        className="relative"
+        style={{
+          height: `${footerHeight}px`,
+          clipPath: "polygon(0% 0, 100% 0%, 100% 100%, 0 100%)"
+        }}
+      >
+        <div
+          className="sticky w-full"
+          style={{
+            height: `${footerHeight}px`,
+            top: `calc(100vh - ${footerHeight}px)`
+          }}
+        >
+          <Footer />
+        </div>
+      </div>
+    </>
   )
 }
 
