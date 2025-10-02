@@ -72,23 +72,21 @@ export default function AdminPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-12">
             <div>
-              <h1 className="text-[clamp(2.5rem,6vw,4rem)] leading-[0.9] tracking-tighter font-medium mb-4">
-                Project Management
-              </h1>
-              <p className="text-text-secondary">
+              <h1 className="text-[clamp(2.5rem,6vw,4rem)] leading-[0.9] tracking-tighter font-medium mb-4">Project Management</h1>
+              <p className="text-xl text-text-secondary">
                 Manage your portfolio projects
               </p>
             </div>
             <div className="flex items-center gap-4">
               <Link
                 href="/admin/projects/new"
-                className="px-6 py-3 bg-text text-background hover:translate-x-1 transition-all duration-300"
+                className="px-6 py-3 text-lg bg-text text-background rounded-lg hover:bg-text/90 transition-colors"
               >
                 Add New Project
               </Link>
               <button
                 onClick={handleLogout}
-                className="px-6 py-3 border-2 border-text text-text hover:bg-text hover:text-background transition-all duration-300"
+                className="px-6 py-3 text-lg border border-secondary text-text rounded-lg hover:bg-secondary/20 transition-colors"
               >
                 Logout
               </button>
@@ -96,86 +94,67 @@ export default function AdminPage() {
           </div>
 
           {/* Projects List */}
-          <div className="bg-background border-2 border-text overflow-hidden">
+          <div className="bg-background border border-secondary rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-text text-background">
+                <thead className="bg-secondary/50">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-medium">
+                    <th className="px-6 py-4 text-left text-lg font-medium text-text-secondary">
                       Project
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium">
-                      Category
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium">
-                      Status
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium">
+                    <th className="px-6 py-4 text-left text-lg font-medium text-text-secondary">
                       Featured
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium">
+                    <th className="px-6 py-4 text-left text-lg font-medium text-text-secondary">
                       Year
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium">
+                    <th className="px-6 py-4 text-left text-lg font-medium text-text-secondary">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y-2 divide-text/10">
+                <tbody>
                   {projects.map((project) => (
-                    <tr key={project.id} className="hover:bg-text/5 transition-colors duration-200">
+                    <tr key={project.id} className="hover:bg-secondary/20 transition-all duration-300 relative group border-b border-secondary after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px] after:bg-text after:scale-x-0 after:origin-left after:transition-transform after:duration-300 after:z-10 hover:after:scale-x-100">
                       <td className="px-6 py-4">
-                        <div>
-                          <div className="font-medium text-text">{project.title}</div>
-                          <div className="text-sm text-text-secondary line-clamp-1">
-                            {project.description}
+                        <Link
+                          href={`/projects/${project.id}`}
+                          className="block w-full text-left p-4 rounded-lg transition-all duration-300 relative group text-text/70 hover:text-text"
+                          data-cursor-text="View"
+                        >
+                          <div>
+                            <div className="text-[clamp(1.5rem,3vw,2.5rem)] font-medium text-text mb-2">{project.title}</div>
+                            <div className="p">
+                              {project.description}
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-1 bg-text/10 text-text text-xs capitalize">
-                          {project.category}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 text-xs ${
-                          project.status === 'completed' ? 'bg-text text-background' :
-                          project.status === 'in-progress' ? 'bg-text/20 text-text' :
-                          'bg-text/10 text-text'
-                        }`}>
-                          {project.status.replace('-', ' ')}
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-6 py-4">
                         {project.featured ? (
-                          <span className="px-2 py-1 bg-text text-background text-xs">
+                          <span className="px-3 py-1 bg-text text-background text-sm font-medium rounded">
                             Yes
                           </span>
                         ) : (
-                          <span className="text-text-secondary text-xs">No</span>
+                          <span className="text-text-secondary text-sm font-medium">No</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-text-secondary">
-                        {project.year}
+                      <td className="px-6 py-4">
+                        <span className="text-sm font-medium text-text-secondary">
+                          {project.year}
+                        </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <Link
-                            href={`/projects/${project.id}`}
-                            className="px-3 py-1 text-xs bg-text/10 text-text hover:bg-text hover:text-background transition-all duration-300"
-                            data-cursor-text="View"
-                          >
-                            View
-                          </Link>
-                          <Link
                             href={`/admin/projects/${project.id}/edit`}
-                            className="px-3 py-1 text-xs border border-text text-text hover:bg-text hover:text-background transition-all duration-300"
+                            className="px-4 py-2 text-sm font-medium bg-secondary text-text-secondary rounded hover:bg-text/10 transition-colors"
                           >
                             Edit
                           </Link>
                           <button
                             onClick={() => handleDeleteProject(project.id)}
-                            className="px-3 py-1 text-xs border border-text text-text hover:bg-text hover:text-background transition-all duration-300"
+                            className="px-4 py-2 text-sm font-medium bg-text/10 text-text rounded hover:bg-text/20 transition-colors"
                           >
                             Delete
                           </button>
