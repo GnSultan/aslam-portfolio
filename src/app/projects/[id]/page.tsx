@@ -218,25 +218,13 @@ export default function ProjectPage() {
 
                 <div className="masonry">
                   {validImages.map((image, index) => {
-                    // Smart layout based on total image count
-                    const getSmartLayout = (index: number, totalImages: number) => {
-                      if (totalImages === 3) {
-                        if (index === 0) return 'full-width'
-                        return 'square'
-                      }
-
-                      if (totalImages === 6) {
-                        if (index === 0 || index === 1) return 'square'
-                        if (index === 2) return 'full-width'
-                        if (index === 3) return 'square'
-                        return 'half-height'
-                      }
-
-                      const patterns = ['square', 'square', 'full-width', 'square', 'half-height', 'half-height']
+                    // Repeating pattern: square, square, full-width (- -, ---, - -, ---, ...)
+                    const getSmartLayout = (index: number) => {
+                      const patterns = ['square', 'square', 'full-width']
                       return patterns[index % patterns.length]
                     }
 
-                    const itemSize = getSmartLayout(index, validImages.length)
+                    const itemSize = getSmartLayout(index)
 
                     return (
                       <motion.div

@@ -311,7 +311,7 @@ export default function FeaturedWork() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative h-[600px] lg:h-[700px] overflow-hidden"
+            className="sticky top-24 h-[600px] lg:h-[700px] overflow-visible"
           >
             {/* Render all project images at once to avoid remounting ParallaxImage */}
             {projects.map((project) => (
