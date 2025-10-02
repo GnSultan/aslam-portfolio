@@ -82,7 +82,7 @@ export function generateBlurDataURL(width = 10, height = 10): string {
 export function getOptimizedImageSizes(breakpoints: { [key: string]: number }) {
   return Object.entries(breakpoints)
     .sort(([, a], [, b]) => a - b)
-    .map(([name, width], index, arr) => {
+    .map(([, width], index, arr) => {
       if (index === arr.length - 1) {
         return `${width}px`
       }

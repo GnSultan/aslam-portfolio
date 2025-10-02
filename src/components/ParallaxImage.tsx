@@ -38,7 +38,6 @@ export default function ParallaxImage({
   blurDataURL,
 }: ParallaxImageProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isInView, setIsInView] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
 
   const { scrollYProgress } = useScroll({
@@ -53,7 +52,6 @@ export default function ParallaxImage({
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsInView(entry.isIntersecting)
         if (entry.isIntersecting && !isInitialized) {
           setIsInitialized(true)
         }

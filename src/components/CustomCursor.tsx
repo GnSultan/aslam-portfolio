@@ -24,7 +24,6 @@ export default function CustomCursor() {
   const rippleIdCounter = useRef(0)
 
   // Magnetic interaction state
-  const [magneticTarget, setMagneticTarget] = useState<HTMLElement | null>(null)
   const magneticOffset = useRef({ x: 0, y: 0 })
 
   // Use Framer Motion values for ultra-smooth interpolation
@@ -109,10 +108,8 @@ export default function CustomCursor() {
       const pullY = (centerY - clientY) * strength * 0.3
 
       magneticOffset.current = { x: pullX, y: pullY }
-      setMagneticTarget(closestElement)
     } else {
       magneticOffset.current = { x: 0, y: 0 }
-      setMagneticTarget(null)
     }
   }, [])
 

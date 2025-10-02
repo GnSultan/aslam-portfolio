@@ -1,7 +1,6 @@
 'use client'
 
 import { motion, AnimatePresence, useMotionValue, PanInfo, useSpring } from 'framer-motion'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { getProjects } from '@/lib/projects'
@@ -17,12 +16,10 @@ interface GalleryImage {
 }
 
 export default function Gallery() {
-  const router = useRouter()
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
   const [fullscreenImage, setFullscreenImage] = useState<GalleryImage | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
-  const [dragStartTime, setDragStartTime] = useState(0)
   const [dragDistance, setDragDistance] = useState(0)
   const { setIsHovering, setCursorText, setCursorVariant } = useCursorStore()
 
@@ -120,7 +117,6 @@ export default function Gallery() {
   // Simple drag handlers - let Framer Motion handle physics
   const handleDragStart = useCallback(() => {
     setIsDragging(true)
-    setDragStartTime(Date.now())
     setDragDistance(0)
   }, [])
 

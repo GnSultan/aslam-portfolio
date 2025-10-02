@@ -3,13 +3,6 @@
 import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
-interface PreloadTarget {
-  href: string
-  priority: number
-  lastHovered?: number
-  viewport?: boolean
-}
-
 export default function SmartPreloader() {
   const router = useRouter()
   const preloadedUrls = useRef(new Set<string>())
@@ -94,10 +87,11 @@ export default function SmartPreloader() {
       document.removeEventListener('mouseleave', handleMouseLeave, true)
 
       // Clear all pending timers
-      hoverTimers.current.forEach(timer => clearTimeout(timer))
-      hoverTimers.current.clear()
+      const timers = hoverTimers.current;
+      timers.forEach(timer => clearTimeout(timer));
+      timers.clear();
     }
-  }, [])
+  }, [preloadUrl, router])
 
   // Viewport-based preloading for visible links
   useEffect(() => {
@@ -147,7 +141,7 @@ export default function SmartPreloader() {
       intersectionObserver.current?.disconnect()
       mutationObserver.disconnect()
     }
-  }, [])
+  }, [preloadUrl])
 
   // Predictive preloading based on common user patterns
   useEffect(() => {
@@ -215,7 +209,7 @@ export default function SmartPreloader() {
 
     const cleanup = predictivePreload()
     return cleanup
-  }, [])
+  }, [preloadUrl])
 
   // Critical resource preloading
   useEffect(() => {

@@ -40,7 +40,7 @@ export default function ImageUpload({ value, onChange, placeholder = "Enter imag
       const filePath = `project-images/${fileName}`
 
       // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('portfolio-assets')
         .upload(filePath, file, {
           cacheControl: '3600',
