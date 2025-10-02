@@ -50,8 +50,10 @@ function LoginForm() {
         transition={{ duration: 0.6 }}
         className="w-full max-w-md"
       >
-        <div className="bg-background border border-secondary rounded-lg p-8">
-          <h1 className="h2 mb-2">Admin Login</h1>
+        <div className="bg-background border-2 border-text p-8">
+          <h1 className="text-[clamp(2rem,5vw,3rem)] leading-[0.9] tracking-tighter font-medium mb-2">
+            Admin Login
+          </h1>
           <p className="text-text-secondary mb-8">
             Enter your password to access the CMS
           </p>
@@ -66,7 +68,7 @@ function LoginForm() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+                className="w-full px-4 py-3 border-2 border-secondary bg-background text-text focus:outline-none focus:border-text transition-colors duration-300"
                 placeholder="Enter admin password"
                 required
                 autoFocus
@@ -74,15 +76,15 @@ function LoginForm() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-100 border border-red-300 rounded-lg">
-                <p className="text-sm text-red-800">{error}</p>
+              <div className="p-3 bg-text/5 border-2 border-text">
+                <p className="text-sm text-text">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-6 py-3 bg-text text-background rounded-lg hover:bg-text/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+              className="w-full px-6 py-3 bg-text text-background hover:translate-x-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 transition-all duration-300 font-medium"
             >
               {loading ? 'Logging in...' : 'Login'}
             </button>
