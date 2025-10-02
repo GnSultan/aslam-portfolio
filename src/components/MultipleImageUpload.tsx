@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
+import { supabase } from '@/lib/supabase'
 
 interface MultipleImageUploadProps {
   value: string[]
@@ -10,11 +11,11 @@ interface MultipleImageUploadProps {
   className?: string
 }
 
-export default function MultipleImageUpload({ 
-  value, 
-  onChange, 
-  maxImages = 10, 
-  className = "" 
+export default function MultipleImageUpload({
+  value,
+  onChange,
+  maxImages = 10,
+  className = ""
 }: MultipleImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
@@ -23,13 +24,12 @@ export default function MultipleImageUpload({
   const handleFileUpload = async (files: FileList) => {
     if (!files || files.length === 0) return
 
-    // const newImages: string[] = []
     const validFiles: File[] = []
 
     // Validate files
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      
+
       if (!file.type.startsWith('image/')) {
         alert(`File ${file.name} is not an image`)
         continue
@@ -53,23 +53,37 @@ export default function MultipleImageUpload({
     setIsUploading(true)
 
     try {
-      const uploadPromises = validFiles.map((file) => {
-        return new Promise<string>((resolve, reject) => {
-          const reader = new FileReader()
-          reader.onload = (e) => {
-            const result = e.target?.result as string
-            resolve(result)
-          }
-          reader.onerror = () => reject(new Error('Error reading file'))
-          reader.readAsDataURL(file)
-        })
+      const uploadPromises = validFiles.map(async (file) => {
+        // Generate unique filename
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+        const filePath = `project-images/${fileName}`
+
+        // Upload to Supabase Storage
+        const { error } = await supabase.storage
+          .from('portfolio-assets')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          })
+
+        if (error) {
+          throw error
+        }
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('portfolio-assets')
+          .getPublicUrl(filePath)
+
+        return publicUrl
       })
 
       const uploadedImages = await Promise.all(uploadPromises)
       onChange([...value, ...uploadedImages])
     } catch (error) {
       console.error('Error uploading files:', error)
-      alert('Error uploading files')
+      alert('Error uploading files. Make sure the storage bucket exists.')
     } finally {
       setIsUploading(false)
     }
@@ -182,7 +196,7 @@ export default function MultipleImageUpload({
       {/* Image Grid */}
       {value.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {value.map((image, index) => (
+          {value.filter(img => img && img.trim() !== '').map((image, index) => (
             <div key={index} className="relative group">
               <div className="relative w-full h-32 rounded-lg overflow-hidden border border-secondary">
                 <Image

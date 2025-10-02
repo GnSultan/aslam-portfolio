@@ -88,7 +88,7 @@ export default function ParallaxImage({
         style={{ y: isInitialized ? y : 0 }}
         className="w-full h-full"
       >
-        {fill ? (
+        {!src ? null : fill ? (
           <Image
             src={src}
             alt={alt}

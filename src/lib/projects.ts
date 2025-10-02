@@ -9,7 +9,7 @@ const mapDbToProject = (dbRow: any): Project => {
     title: dbRow.title,
     description: dbRow.description,
     image: dbRow.image,
-    images: dbRow.images || [],
+    images: (dbRow.images || []).filter((img: string) => img && img.trim() !== ''),
     category: dbRow.category,
     tags: dbRow.tags || [],
     technologies: dbRow.technologies || [],
@@ -39,7 +39,7 @@ const mapProjectToDb = (project: Partial<ProjectFormData>) => {
     title: project.title,
     description: project.description,
     image: project.image,
-    images: project.images,
+    images: project.images?.filter(img => img && img.trim() !== '') || [],
     category: project.category,
     tags: project.tags,
     technologies: project.technologies,
@@ -119,6 +119,8 @@ export const createProject = async (projectData: ProjectFormData): Promise<Proje
 export const updateProject = async (id: string, projectData: Partial<ProjectFormData>): Promise<Project | null> => {
   const dbData = mapProjectToDb(projectData);
 
+  console.log('Updating project with data:', dbData);
+
   const { data, error } = await supabase
     .from('projects')
     .update(dbData)
@@ -128,6 +130,8 @@ export const updateProject = async (id: string, projectData: Partial<ProjectForm
 
   if (error) {
     console.error('Error updating project:', error);
+    console.error('Full error details:', JSON.stringify(error, null, 2));
+    console.error('Data being sent:', JSON.stringify(dbData, null, 2).substring(0, 500));
     throw new Error('Failed to update project');
   }
 

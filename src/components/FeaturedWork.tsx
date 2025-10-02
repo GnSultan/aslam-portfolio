@@ -30,6 +30,14 @@ export default function FeaturedWork() {
           // Reset hover states when projects load
           setHoveredProject(null)
           currentHoveredProject.current = null
+
+          // Preload all featured project images to prevent freeze on hover
+          featuredProjects.forEach((project) => {
+            if (project.image) {
+              const img = new window.Image()
+              img.src = project.image
+            }
+          })
         }
       } catch (error) {
         console.error('Error loading featured projects:', error)
@@ -305,51 +313,43 @@ export default function FeaturedWork() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative h-[600px] lg:h-[700px] overflow-hidden"
           >
-            {activeProject ? (
+            {/* Render all project images at once to avoid remounting ParallaxImage */}
+            {projects.map((project) => (
               <motion.div
-                key={activeProject.id}
-                initial={{ 
-                  opacity: 0, 
-                  x: 50,
+                key={project.id}
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: activeProject?.id === project.id ? 1 : 0,
+                  x: activeProject?.id === project.id ? 0 : 50,
                   rotate: -5
                 }}
-                animate={{ 
-                  opacity: 1, 
-                  x: 0,
-                  rotate: -5
-                }}
-                transition={{ 
-                  duration: 0.6, 
+                transition={{
+                  duration: 0.6,
                   ease: [0.25, 0.1, 0.25, 1]
                 }}
-                className="relative w-[480px] lg:w-[520px] h-[600px] mx-auto"
+                className="absolute inset-0 w-[480px] lg:w-[520px] h-[600px] mx-auto"
+                style={{ pointerEvents: activeProject?.id === project.id ? 'auto' : 'none' }}
               >
                 <Link
-                  href={`/projects/${activeProject.id}`}
+                  href={`/projects/${project.id}`}
                   data-cursor-text="View"
                   className="block w-full h-full rounded-lg overflow-hidden"
+                  tabIndex={activeProject?.id === project.id ? 0 : -1}
                 >
                   <ParallaxImage
-                    src={activeProject.image}
-                    alt={`${activeProject.title} project mockup`}
+                    src={project.image}
+                    alt={`${project.title} project mockup`}
                     fill
                     speed={-0.8}
                     className="object-cover hover:scale-105 transition-transform duration-500"
                     containerClassName="relative w-full h-full"
                     sizes="(max-width: 768px) 100vw, 50vw"
                     quality={90}
-                    priority={activeProject.id === projects[0]?.id}
+                    priority={project.id === projects[0]?.id}
                   />
                 </Link>
               </motion.div>
-            ) : (
-              <div className="relative w-[480px] lg:w-[520px] h-[600px] mx-auto flex items-center justify-center bg-secondary/10 rounded-lg">
-                <div className="text-text/50 text-center">
-                  <div className="animate-spin w-8 h-8 border-2 border-text/20 border-t-text/50 rounded-full mx-auto mb-4"></div>
-                  <p>Loading project...</p>
-                </div>
-              </div>
-            )}
+            ))}
           </motion.div>
         </div>
       </div>

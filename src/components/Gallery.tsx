@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence, useMotionValue, PanInfo, useSpring } from 'framer-motion'
+import { motion, useMotionValue, PanInfo, useSpring } from 'framer-motion'
 import Image from 'next/image'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { getProjects } from '@/lib/projects'
@@ -17,10 +17,7 @@ interface GalleryImage {
 
 export default function Gallery() {
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
-  const [fullscreenImage, setFullscreenImage] = useState<GalleryImage | null>(null)
-  const [currentIndex, setCurrentIndex] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
-  const [dragDistance, setDragDistance] = useState(0)
   const { setIsHovering, setCursorText, setCursorVariant } = useCursorStore()
 
   // Direct motion value - no spring layers
@@ -117,13 +114,10 @@ export default function Gallery() {
   // Simple drag handlers - let Framer Motion handle physics
   const handleDragStart = useCallback(() => {
     setIsDragging(true)
-    setDragDistance(0)
   }, [])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDrag = useCallback((_event: any, info: PanInfo) => {
-    setDragDistance(prev => prev + Math.abs(info.delta.x))
-
     // Apply subtle parallax offset (opposite direction, minimal for natural depth effect)
     const maxParallaxOffset = 6
     const parallaxMultiplier = 0.12
@@ -137,21 +131,10 @@ export default function Gallery() {
     parallaxTarget.set(0)
   }, [parallaxTarget])
 
-  // Handle image click for fullscreen only
-  const handleImageClick = useCallback((image: GalleryImage, index: number) => {
-    const dragThreshold = 5
-    if (isDragging) return
-    if (dragDistance < dragThreshold) {
-      // Show fullscreen view
-      setFullscreenImage(image)
-      setCurrentIndex(index)
-    }
-  }, [dragDistance, isDragging])
-
-  // Cursor interactions
+  // Cursor interactions - just show drag text
   const handleMouseEnter = useCallback(() => {
     setIsHovering(true)
-    setCursorText('View')
+    setCursorText('Drag')
     setCursorVariant('hover')
   }, [setIsHovering, setCursorText, setCursorVariant])
 
@@ -161,39 +144,6 @@ export default function Gallery() {
     setCursorVariant('default')
   }, [setIsHovering, setCursorText, setCursorVariant])
 
-  // Fullscreen navigation
-  const navigateFullscreen = useCallback((direction: 'prev' | 'next') => {
-    if (!fullscreenImage) return
-
-    const newIndex = direction === 'next'
-      ? (currentIndex + 1) % galleryImages.length
-      : (currentIndex - 1 + galleryImages.length) % galleryImages.length
-
-    setCurrentIndex(newIndex)
-    setFullscreenImage(galleryImages[newIndex])
-  }, [fullscreenImage, currentIndex, galleryImages])
-
-  // Keyboard navigation for fullscreen
-  useEffect(() => {
-    if (!fullscreenImage) return
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case 'ArrowLeft':
-          navigateFullscreen('prev')
-          break
-        case 'ArrowRight':
-          navigateFullscreen('next')
-          break
-        case 'Escape':
-          setFullscreenImage(null)
-          break
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [fullscreenImage, navigateFullscreen])
 
   if (galleryImages.length === 0) {
     return null // Don't render if no images
@@ -272,8 +222,7 @@ export default function Gallery() {
                     mass: 0.85
                   }
                 }}
-                className="flex-shrink-0 w-[280px] sm:w-[350px] md:w-[450px] lg:w-[550px] xl:w-[600px] h-[350px] sm:h-[450px] md:h-[600px] lg:h-[700px] xl:h-[750px] group cursor-pointer"
-                onClick={() => handleImageClick(image, index)}
+                className="flex-shrink-0 w-[280px] sm:w-[350px] md:w-[450px] lg:w-[550px] xl:w-[600px] h-[350px] sm:h-[450px] md:h-[600px] lg:h-[700px] xl:h-[750px] group"
                 data-magnetic
               >
                 <div className="relative w-full h-full overflow-hidden rounded-lg">
@@ -309,93 +258,6 @@ export default function Gallery() {
           </motion.div>
         </div>
       </section>
-
-      {/* Fullscreen Image Viewer */}
-      <AnimatePresence>
-        {fullscreenImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
-            onClick={() => setFullscreenImage(null)}
-          >
-            {/* Navigation Arrows */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                navigateFullscreen('prev')
-              }}
-              className="absolute left-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
-              data-cursor-text="Previous"
-            >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                navigateFullscreen('next')
-              }}
-              className="absolute right-8 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
-              data-cursor-text="Next"
-            >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-
-            {/* Close Button */}
-            <button
-              onClick={() => setFullscreenImage(null)}
-              className="absolute top-8 right-8 z-10 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
-              data-cursor-text="Close"
-            >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            {/* Image */}
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className="relative max-w-[90vw] max-h-[90vh] aspect-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Image
-                src={fullscreenImage.src}
-                alt={fullscreenImage.alt}
-                width={1200}
-                height={800}
-                className="object-contain max-w-full max-h-full"
-                quality={95}
-                priority
-              />
-
-              {/* Image Info */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-                <h3 className="text-white text-xl font-semibold mb-2">
-                  {fullscreenImage.projectTitle}
-                </h3>
-                <p className="text-white/80 text-sm">
-                  {fullscreenImage.alt}
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Keyboard shortcuts hint */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 text-sm text-center">
-              <p>Use ← → arrow keys to navigate • Press ESC to close</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   )
 }
