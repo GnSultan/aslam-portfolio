@@ -29,8 +29,12 @@ export default function ProjectValueDelivered({ values, className = '' }: Projec
             <h2 className="h3 text-text">Value Delivered</h2>
           </div>
 
-          {/* Value list - inline grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Value list - responsive grid based on count */}
+          <div className={`grid gap-8 ${
+            values.length === 1 ? 'grid-cols-1' :
+            values.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
+            'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+          }`}>
             {values.map((item, index) => (
               <motion.div
                 key={index}
