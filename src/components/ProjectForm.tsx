@@ -199,12 +199,12 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto p-6">
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-6 text-text">Project Snapshot</h2>
-        <p className="text-text-secondary mb-6">Basic information about the project</p>
+        <h3 className="h3 mb-6 text-text">Project Snapshot</h3>
+        <p className="p-small mb-6">Basic information about the project</p>
 
         {/* Title */}
         <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">
+          <label className="block p font-medium mb-2">
             Project Title *
           </label>
           <input
@@ -212,53 +212,53 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
             required
             value={formData.title}
             onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-            className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+            className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
             placeholder="e.g., Flow"
           />
         </div>
 
         {/* Description */}
         <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">
+          <label className="block p font-medium mb-2">
             Short Description *
           </label>
           <textarea
             required
             value={formData.description}
             onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-            className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+            className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
             rows={3}
             placeholder="A modern productivity app that helps teams stay focused and ship faster"
           />
-          <p className="text-sm text-text-secondary mt-1">Keep it under 2 sentences, plain language</p>
+          <p className="p-small text-text-secondary mt-1">Keep it under 2 sentences, plain language</p>
         </div>
 
         {/* Meta Information Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Client */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block p font-medium mb-2">
               Client/Brand
             </label>
             <input
               type="text"
               value={formData.client || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, client: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               placeholder="e.g., FlowHQ"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block p font-medium mb-2">
               Type *
             </label>
             <select
               required
               value={formData.category}
               onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as Category }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
             >
               {categories.map(cat => (
                 <option key={cat.value} value={cat.value}>{cat.label}</option>
@@ -268,7 +268,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
           {/* Year */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block p font-medium mb-2">
               Timeline (Year) *
             </label>
             <input
@@ -276,28 +276,28 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               required
               value={formData.year}
               onChange={(e) => setFormData(prev => ({ ...prev, year: parseInt(e.target.value) }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               placeholder="2025"
             />
           </div>
 
           {/* Duration */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block p font-medium mb-2">
               Duration
             </label>
             <input
               type="text"
               value={formData.duration || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               placeholder="e.g., 4 months"
             />
           </div>
 
           {/* Role */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block p font-medium mb-2">
               Your Role *
             </label>
             <input
@@ -305,21 +305,21 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
               required
               value={formData.role}
               onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               placeholder="e.g., Lead Product Designer"
             />
           </div>
 
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block p font-medium mb-2">
               Status *
             </label>
             <select
               required
               value={formData.status}
               onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as Status }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
             >
               {statuses.map(status => (
                 <option key={status.value} value={status.value}>{status.label}</option>
@@ -343,14 +343,14 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block p font-medium mb-2">
               Display Order
             </label>
             <input
               type="number"
               value={formData.order}
               onChange={(e) => setFormData(prev => ({ ...prev, order: parseInt(e.target.value) }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               placeholder="0"
             />
           </div>
@@ -359,11 +359,11 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Images */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-6 text-text">Visual Showcase</h2>
+        <h3 className="h3 mb-6 text-text">Visual Showcase</h3>
 
         {/* Hero Image */}
         <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">
+          <label className="block p font-medium mb-2">
             Hero Image *
           </label>
           <ImageUpload
@@ -375,7 +375,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
         {/* Gallery Images */}
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block p font-medium mb-2">
             Gallery Images
           </label>
           <MultipleImageUpload
@@ -387,23 +387,23 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* The Challenge */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-text">The Challenge</h2>
-        <p className="text-text-secondary mb-6">One simple sentence that anyone can understand</p>
+        <h3 className="h3 mb-4 text-text">The Challenge</h3>
+        <p className="p-small mb-6">One simple sentence that anyone can understand</p>
 
         <textarea
           value={formData.challenge || ''}
           onChange={(e) => setFormData(prev => ({ ...prev, challenge: e.target.value }))}
-          className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+          className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary p"
           rows={3}
           placeholder="They needed a tool that felt effortless to use, without the clutter and learning curve of traditional project management software."
         />
-        <p className="text-sm text-text-secondary mt-1">✨ Keep it plain language - no jargon!</p>
+        <p className="p-small text-text-secondary mt-1">✨ Keep it plain language - no jargon!</p>
       </div>
 
       {/* Approach */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-text">Approach</h2>
-        <p className="text-text-secondary mb-6">2-3 key moves you made (plain language, not jargon)</p>
+        <h3 className="h3 mb-4 text-text">Approach</h3>
+        <p className="p-small mb-6">2-3 key moves you made (plain language, not jargon)</p>
 
         {/* List of bullets */}
         {formData.approachBullets && formData.approachBullets.length > 0 && (
@@ -430,7 +430,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
             value={newApproachBullet}
             onChange={(e) => setNewApproachBullet(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addApproachBullet())}
-            className="flex-1 px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            className="flex-1 px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary p"
             placeholder="e.g., Designed an ultra-minimal interface that puts tasks front and center"
           />
           <button
@@ -445,8 +445,8 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Value Delivered */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-text">Value Delivered</h2>
-        <p className="text-text-secondary mb-6">Talk outcomes, not deliverables</p>
+        <h3 className="h3 mb-4 text-text">Value Delivered</h3>
+        <p className="p-small mb-6">Talk outcomes, not deliverables</p>
 
         {/* List of values */}
         {formData.valueDelivered && formData.valueDelivered.length > 0 && (
@@ -470,22 +470,22 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
         {/* Add new value */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Value/Metric</label>
+            <label className="block p font-medium mb-2">Value/Metric</label>
             <input
               type="text"
               value={newValueValue}
               onChange={(e) => setNewValueValue(e.target.value)}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               placeholder="e.g., 3x, 40%, 4.9/5"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">Label</label>
+            <label className="block p font-medium mb-2">Label</label>
             <input
               type="text"
               value={newValueLabel}
               onChange={(e) => setNewValueLabel(e.target.value)}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               placeholder="e.g., Faster task completion"
             />
           </div>
@@ -501,12 +501,12 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Client Perspective */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-text">Client Perspective</h2>
-        <p className="text-text-secondary mb-6">Short authentic feedback (optional)</p>
+        <h3 className="h3 mb-4 text-text">Client Perspective</h3>
+        <p className="p-small mb-6">Short authentic feedback (optional)</p>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Quote</label>
+            <label className="block p font-medium mb-2">Quote</label>
             <textarea
               value={formData.testimonial?.quote || ''}
               onChange={(e) => setFormData(prev => ({
@@ -517,7 +517,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
                   role: prev.testimonial?.role || '',
                 }
               }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               rows={3}
               placeholder="Flow feels like magic. It's the first productivity tool that actually makes us more productive instead of just tracking our work."
             />
@@ -525,7 +525,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Author Name</label>
+              <label className="block p font-medium mb-2">Author Name</label>
               <input
                 type="text"
                 value={formData.testimonial?.author || ''}
@@ -537,13 +537,13 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
                     role: prev.testimonial?.role || '',
                   }
                 }))}
-                className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+                className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
                 placeholder="Sarah Chen"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Role/Title</label>
+              <label className="block p font-medium mb-2">Role/Title</label>
               <input
                 type="text"
                 value={formData.testimonial?.role || ''}
@@ -555,7 +555,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
                     role: e.target.value,
                   }
                 }))}
-                className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+                className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
                 placeholder="Product Lead at FlowHQ"
               />
             </div>
@@ -565,13 +565,13 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Relevance Note */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-text">Relevance / Personal Connection</h2>
-        <p className="text-text-secondary mb-6">Connect this project to future clients</p>
+        <h3 className="h3 mb-4 text-text">Relevance / Personal Connection</h3>
+        <p className="p-small mb-6">Connect this project to future clients</p>
 
         <textarea
           value={formData.relevanceNote || ''}
           onChange={(e) => setFormData(prev => ({ ...prev, relevanceNote: e.target.value }))}
-          className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+          className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary p"
           rows={3}
           placeholder="I love building tools that get out of your way and help you do your best work. If you're looking to create software that people actually enjoy using, let's talk."
         />
@@ -579,7 +579,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Tech Stack */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-text">Tech Stack</h2>
+        <h3 className="h3 mb-4 text-text">Tech Stack</h3>
 
         {/* List of technologies */}
         {formData.technologies.length > 0 && (
@@ -609,7 +609,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
             value={newTech}
             onChange={(e) => setNewTech(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTechnology())}
-            className="flex-1 px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            className="flex-1 px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary p"
             placeholder="e.g., React, TypeScript, Node.js"
           />
           <button
@@ -624,7 +624,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Tags */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-text">Tags</h2>
+        <h3 className="h3 mb-4 text-text">Tags</h3>
 
         {/* List of tags */}
         {formData.tags.length > 0 && (
@@ -654,7 +654,7 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
             value={newTag}
             onChange={(e) => setNewTag(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-            className="flex-1 px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary"
+            className="flex-1 px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-primary p"
             placeholder="e.g., Productivity, SaaS, Collaboration"
           />
           <button
@@ -669,49 +669,49 @@ export default function ProjectForm({ projectId, mode }: ProjectFormProps) {
 
       {/* Links */}
       <div className="bg-background border border-secondary rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-text">Links</h2>
+        <h3 className="h3 mb-4 text-text">Links</h3>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Live URL</label>
+            <label className="block p font-medium mb-2">Live URL</label>
             <input
               type="url"
               value={formData.liveUrl || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, liveUrl: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               placeholder="https://example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">GitHub URL</label>
+            <label className="block p font-medium mb-2">GitHub URL</label>
             <input
               type="url"
               value={formData.githubUrl || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, githubUrl: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               placeholder="https://github.com/..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Behance URL</label>
+            <label className="block p font-medium mb-2">Behance URL</label>
             <input
               type="url"
               value={formData.behanceUrl || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, behanceUrl: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               placeholder="https://behance.net/..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Website Embed URL</label>
+            <label className="block p font-medium mb-2">Website Embed URL</label>
             <input
               type="url"
               value={formData.websiteEmbed || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, websiteEmbed: e.target.value }))}
-              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text"
+              className="w-full px-4 py-2 border border-secondary rounded-lg bg-background text-text focus:outline-none focus:border-text p"
               placeholder="https://example.com (for iframe)"
             />
           </div>
